@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-const api = axios.create({ baseURL: 'http://localhost:8000/api' })
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const api = axios.create({ baseURL: `${BASE_URL}/api` })
 
 export const searchQuery = (q) => api.get('/search', { params: { q } })
 export const getStocks = (ticker) => api.get('/stocks', { params: { ticker } })
