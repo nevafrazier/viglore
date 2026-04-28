@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import search, stocks, cities, trends, describe
+from app.routes import search, stocks, cities, trends, describe, city_signal
 from app.database.database import init_db
 
 app = FastAPI(title="TechSentinel AI", version="1.0.0")
@@ -21,6 +21,7 @@ app.include_router(stocks.router, prefix="/api")
 app.include_router(cities.router, prefix="/api")
 app.include_router(trends.router, prefix="/api")
 app.include_router(describe.router, prefix="/api")
+app.include_router(city_signal.router, prefix="/api")
 
 @app.get("/")
 def root():

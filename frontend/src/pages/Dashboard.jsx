@@ -7,6 +7,7 @@ import SummaryPanel from '../components/SummaryPanel'
 import NewsCard from '../components/NewsCard'
 import RedditCard from '../components/RedditCard'
 import TopicDescription from '../components/TopicDescription'
+import CitySignalPanel from '../components/CitySignalPanel'
 
 function ArticleSection({ title, subtitle, dot, items, Component }) {
   if (!items?.length) return null
@@ -172,6 +173,9 @@ export default function Dashboard() {
               <SentimentMeter sentiment={data.sentiment} />
               <KeywordPanel keywords={data.keywords} query={query} />
             </div>
+
+            {/* City Presence */}
+            <CitySignalPanel query={query} />
 
             {/* Tabbed news + reddit */}
             <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
