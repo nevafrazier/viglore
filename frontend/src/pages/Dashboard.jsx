@@ -183,7 +183,7 @@ export default function Dashboard() {
               <div className="flex border-b border-slate-800">
                 {[
                   { id: 'news',   label: 'News Articles',       count: data.news_articles.length },
-                  { id: 'reddit', label: 'Reddit Discussions',  count: data.reddit_posts.length },
+                  { id: 'reddit', label: 'HN Discussions',  count: data.reddit_posts.length },
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -219,7 +219,7 @@ export default function Dashboard() {
                     <ArticleSection title="Neutral Discussion" subtitle="informational or mixed posts" dot="bg-slate-500" items={rNeu} Component={RedditCard} />
                     <ArticleSection title="Critical Discussion" subtitle="posts expressing concerns or criticism" dot="bg-red-400" items={rNeg} Component={RedditCard} />
                     {!rPos.length && !rNeu.length && !rNeg.length && (
-                      <p className="text-slate-500 text-center py-8">No Reddit posts found for this topic.</p>
+                      <p className="text-slate-500 text-center py-8">No Hacker News posts found for this topic.</p>
                     )}
                   </div>
                 )}

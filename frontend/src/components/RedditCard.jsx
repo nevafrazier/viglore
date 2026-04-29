@@ -11,7 +11,7 @@ export default function RedditCard({ post }) {
     <a href={post.url} target="_blank" rel="noopener noreferrer"
       className="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-orange-900 hover:bg-slate-800/60 transition-all">
       <div className="flex items-center gap-2 mb-2 flex-wrap">
-        <span className="text-xs text-orange-400 font-medium bg-orange-950/40 px-2 py-0.5 rounded-full">r/{post.subreddit}</span>
+        <span className="text-xs text-orange-400 font-medium bg-orange-950/40 px-2 py-0.5 rounded-full">{post.subreddit === 'Hacker News' ? 'HN' : `r/${post.subreddit}`}</span>
         <span className="text-xs text-slate-500">↑ {post.score.toLocaleString()}</span>
         <span className="text-xs text-slate-500">💬 {post.comments}</span>
         <span className={`text-xs font-medium px-2 py-0.5 rounded-full ml-auto ${label.color}`}>{label.text}</span>

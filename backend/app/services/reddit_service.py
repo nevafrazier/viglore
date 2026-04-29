@@ -1,38 +1,30 @@
 import httpx
 
-HEADERS = {
-    "User-Agent": "web:signalscope:v1.0 (by /u/nevafrazier)",
-    "Accept": "application/json",
-}
-
-PUSHSHIFT_HEADERS = {"User-Agent": "SignalScope/1.0"}
+HEADERS = {"User-Agent": "SignalScope/1.0"}
 
 
 def search_reddit(query: str, limit: int = 15) -> list[dict]:
+    """Search Hacker News for relevant discussions."""
     results = []
-    urls = [
-        ("https://www.reddit.com/search.json", {"q": query, "limit": limit, "sort": "relevance", "type": "link", "raw_json": 1}),
-        (f"https://www.reddit.com/search.json", {"q": query, "limit": limit, "sort": "new", "type": "link", "raw_json": 1}),
-    ]
-    for url, params in urls:
-        try:
-            resp = httpx.get(url, headers=HEADERS, params=params, timeout=15, follow_redirects=True)
-            if resp.status_code != 200:
+    try:
+        resp = httpx.get(
+            "https://hn.algolia.com/api/v1/search",
+            headers=HEADERS,
+            params={"query": query, "tags": "story", "hitsPerPage": limit},
+            timeout=10,
+        )
+        for h in resp.json().get("hits", []):
+            title = h.get("title", "")
+            if not title:
                 continue
-            data = resp.json()
-            posts = data.get("data", {}).get("children", [])
-            for p in posts:
-                d = p["data"]
-                results.append({
-                    "title": d.get("title", ""),
-                    "score": d.get("score", 0),
-                    "url": f"https://reddit.com{d.get('permalink', '')}",
-                    "comments": d.get("num_comments", 0),
-                    "subreddit": d.get("subreddit", ""),
-                    "created_utc": d.get("created_utc", 0),
-                })
-            if results:
-                break
-        except Exception:
-            continue
+            results.append({
+                "title": title,
+                "score": h.get("points", 0),
+                "url": h.get("url") or f"https://news.ycombinator.com/item?id={h.get('objectID')}",
+                "comments": h.get("num_comments", 0),
+                "subreddit": "Hacker News",
+                "created_utc": h.get("created_at_i", 0),
+            })
+    except Exception:
+        pass
     return results
