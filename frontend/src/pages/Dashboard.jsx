@@ -177,51 +177,19 @@ export default function Dashboard() {
             {/* City Presence */}
             <CitySignalPanel query={query} />
 
-            {/* Tabbed news + reddit */}
+            {/* News */}
             <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-              {/* Tab bar */}
-              <div className="flex border-b border-slate-800">
-                {[
-                  { id: 'news',   label: 'News Articles',       count: data.news_articles.length },
-                  { id: 'reddit', label: 'HN Discussions',  count: data.reddit_posts.length },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`px-6 py-4 text-sm font-medium transition-colors flex items-center gap-2 ${
-                      activeTab === tab.id
-                        ? 'text-white border-b-2 border-cyan-400 bg-slate-800/40'
-                        : 'text-slate-500 hover:text-slate-300'
-                    }`}
-                  >
-                    {tab.label}
-                    <span className={`text-xs px-1.5 py-0.5 rounded-full ${activeTab === tab.id ? 'bg-cyan-950 text-cyan-400' : 'bg-slate-800 text-slate-600'}`}>
-                      {tab.count}
-                    </span>
-                  </button>
-                ))}
+              <div className="flex items-center gap-2 px-5 py-4 border-b border-slate-800">
+                <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                <span className="text-xs font-semibold uppercase tracking-widest text-cyan-400">News Articles</span>
+                <span className="text-xs bg-cyan-950 text-cyan-400 px-1.5 py-0.5 rounded-full ml-1">{data.news_articles.length}</span>
               </div>
-
               <div className="p-5">
-                {activeTab === 'news' && (
-                  <div>
-                    <ArticleSection title="Favorable Coverage" subtitle="articles with a positive tone" dot="bg-green-400" items={pos} Component={NewsCard} />
-                    <ArticleSection title="Neutral / Informational" subtitle="factual reporting" dot="bg-slate-500" items={neu} Component={NewsCard} />
-                    <ArticleSection title="Critical Coverage" subtitle="articles with a negative or critical tone" dot="bg-red-400" items={neg} Component={NewsCard} />
-                    {!pos.length && !neu.length && !neg.length && (
-                      <p className="text-slate-500 text-center py-8">No news articles found for this topic.</p>
-                    )}
-                  </div>
-                )}
-                {activeTab === 'reddit' && (
-                  <div>
-                    <ArticleSection title="Positive Discussion" subtitle="upvoted posts with a positive tone" dot="bg-green-400" items={rPos} Component={RedditCard} />
-                    <ArticleSection title="Neutral Discussion" subtitle="informational or mixed posts" dot="bg-slate-500" items={rNeu} Component={RedditCard} />
-                    <ArticleSection title="Critical Discussion" subtitle="posts expressing concerns or criticism" dot="bg-red-400" items={rNeg} Component={RedditCard} />
-                    {!rPos.length && !rNeu.length && !rNeg.length && (
-                      <p className="text-slate-500 text-center py-8">No Hacker News posts found for this topic.</p>
-                    )}
-                  </div>
+                <ArticleSection title="Favorable Coverage" subtitle="articles with a positive tone" dot="bg-green-400" items={pos} Component={NewsCard} />
+                <ArticleSection title="Neutral / Informational" subtitle="factual reporting" dot="bg-slate-500" items={neu} Component={NewsCard} />
+                <ArticleSection title="Critical Coverage" subtitle="articles with a negative or critical tone" dot="bg-red-400" items={neg} Component={NewsCard} />
+                {!pos.length && !neu.length && !neg.length && (
+                  <p className="text-slate-500 text-center py-8">No news articles found for this topic.</p>
                 )}
               </div>
             </div>

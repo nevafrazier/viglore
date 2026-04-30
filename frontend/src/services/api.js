@@ -11,3 +11,4 @@ export const describeTopic = (q, title = null) => api.get('/describe', { params:
 export const getSuggestions = (q) => api.get('/suggest', { params: { q } })
 export const getCompanyOverview = (ticker) => api.get('/company', { params: { ticker } })
 export const getCitySignal = (q) => api.get('/city-signal', { params: { q } })
+export const getStocktwits = (ticker) => api.get('/stocktwits', { params: { ticker } })

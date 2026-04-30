@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { getStocks, searchQuery, getCompanyOverview } from '../services/api'
+import { getStocks, searchQuery, getCompanyOverview, getStocktwits } from '../services/api'
 import StockCard from '../components/StockCard'
 import SentimentMeter from '../components/SentimentMeter'
 import SummaryPanel from '../components/SummaryPanel'
 import NewsCard from '../components/NewsCard'
+import StocktwitsCard from '../components/StocktwitsCard'
 
 const QUICK_TICKERS = [
   { ticker: 'NVDA', label: 'NVIDIA' },
@@ -70,6 +71,7 @@ export default function Stocks() {
   const [stock, setStock]       = useState(null)
   const [overview, setOverview] = useState(null)
   const [sentiment, setSentiment] = useState(null)
+  const [twits, setTwits]       = useState([])
   const [loading, setLoading]   = useState(false)
   const [error, setError]       = useState(null)
   const [currentTicker, setCurrentTicker] = useState('')
@@ -83,18 +85,21 @@ export default function Stocks() {
     setStock(null)
     setOverview(null)
     setSentiment(null)
+    setTwits([])
     setCurrentTicker(symbol)
 
     try {
       const searchTerm = TICKER_TO_NAME[symbol] || symbol
-      const [stockRes, sentimentRes, overviewRes] = await Promise.all([
+      const [stockRes, sentimentRes, overviewRes, twitsRes] = await Promise.all([
         getStocks(symbol),
         searchQuery(searchTerm),
         getCompanyOverview(symbol),
+        getStocktwits(symbol),
       ])
       setStock(stockRes.data)
       setSentiment(sentimentRes.data)
       setOverview(overviewRes.data)
+      setTwits(twitsRes.data?.messages || [])
     } catch {
       setError('Failed to load data. Make sure the backend is running.')
     } finally {
@@ -156,6 +161,14 @@ export default function Stocks() {
                     {sentiment.news_articles.slice(0, 6).map((a, i) => <NewsCard key={i} article={a} />)}
                   </div>
                 </div>
+                {twits.length > 0 && (
+                  <div>
+                    <h2 className="text-white font-semibold text-lg mb-4">Stocktwits — What Traders Are Saying</h2>
+                    <div className="grid md:grid-cols-2 gap-3">
+                      {twits.slice(0, 8).map((m, i) => <StocktwitsCard key={i} message={m} />)}
+                    </div>
+                  </div>
+                )}
               </>
             )}
           </div>
