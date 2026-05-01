@@ -16,8 +16,8 @@ const FEATURES = [
   },
   {
     icon: '💬',
-    title: 'Reddit Pulse',
-    desc: 'See what real people are saying across Reddit — upvote scores, comment counts, and sentiment labels on every post.',
+    title: 'Trader Sentiment',
+    desc: 'See what investors and traders are saying on Stocktwits — with bullish/bearish labels on every post.',
   },
   {
     icon: '📈',
@@ -70,7 +70,7 @@ export default function Home() {
         </h1>
 
         <p className="text-slate-400 text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
-          TechSentinel AI analyzes news and Reddit discussions in real time — giving you sentiment scores, trend data, and AI summaries for any company, stock, game, or topic.
+          Viglore analyzes news in real time — giving you sentiment scores, trend data, and summaries for any company, stock, game, or topic.
         </p>
 
         <div className="flex gap-3 max-w-xl mx-auto mb-5">
