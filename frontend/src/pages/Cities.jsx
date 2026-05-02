@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getCities } from '../services/api'
+import { getCities, getCityLookup } from '../services/api'
 import CityDetailModal from '../components/CityDetailModal'
 
 const LABEL_COLORS = {
@@ -22,6 +22,8 @@ export default function Cities() {
   const [search, setSearch] = useState('')
   const [sortOrder, setSortOrder] = useState('desc')
   const [selectedCity, setSelectedCity] = useState(null)
+  const [lookupLoading, setLookupLoading] = useState(false)
+  const [lookupError, setLookupError] = useState('')
 
   useEffect(() => {
     getCities().then((res) => {
@@ -39,6 +41,24 @@ export default function Cities() {
     result.sort((a, b) => sortOrder === 'desc' ? b.tech_score - a.tech_score : a.tech_score - b.tech_score)
     setFiltered(result)
   }, [search, sortOrder, cities])
+
+  const handleLookup = async () => {
+    if (!search.trim()) return
+    setLookupLoading(true)
+    setLookupError('')
+    try {
+      const res = await getCityLookup(search.trim())
+      if (res.data.error) {
+        setLookupError(res.data.error)
+      } else {
+        setSelectedCity(res.data)
+      }
+    } catch {
+      setLookupError('Could not look up that city. Try adding the state (e.g. "Tucson, AZ").')
+    } finally {
+      setLookupLoading(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -59,7 +79,8 @@ export default function Cities() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search a city..."
+            placeholder="Search any US city..."
+            onKeyDown={(e) => e.key === 'Enter' && filtered.length === 0 && handleLookup()}
             className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-5 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors text-sm"
           />
           <button
@@ -74,7 +95,18 @@ export default function Cities() {
         {loading ? (
           <div className="text-slate-500 text-center py-20">Loading city data...</div>
         ) : filtered.length === 0 ? (
-          <div className="text-slate-500 text-center py-20">No cities match "{search}"</div>
+          <div className="text-center py-16">
+            <p className="text-slate-500 mb-2">"{search}" isn't in our ranked database.</p>
+            <p className="text-slate-600 text-sm mb-6">We track 50 US tech cities. Want general info about this city?</p>
+            <button
+              onClick={handleLookup}
+              disabled={lookupLoading}
+              className="bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-slate-950 font-bold px-6 py-2.5 rounded-xl transition-colors"
+            >
+              {lookupLoading ? 'Looking up...' : `Look up "${search}" →`}
+            </button>
+            {lookupError && <p className="text-red-400 text-sm mt-4">{lookupError}</p>}
+          </div>
         ) : (
           <div className="grid gap-4">
             {filtered.map((city, i) => (
