@@ -65,14 +65,10 @@ export default function KeywordPanel({ keywords, query }) {
       <div className="border-t border-slate-800 pt-4 mt-2">
         <p className="text-slate-600 text-xs font-semibold uppercase tracking-wider mb-2">How this is calculated</p>
         <p className="text-slate-500 text-xs leading-relaxed">
-          Keywords are extracted by scanning all collected news headlines and Reddit post titles, removing common filler words,
+          Keywords are extracted by scanning all collected news headlines, removing common filler words,
           then ranking the remaining terms by frequency. High-frequency terms indicate the dominant sub-topics driving discussion around this query.
         </p>
         <div className="flex flex-wrap gap-3 mt-3">
-          <div className="flex items-center gap-1.5 text-xs text-slate-500">
-            <div className="w-1.5 h-1.5 rounded-full bg-orange-400" />
-            Source: Reddit post titles
-          </div>
           <div className="flex items-center gap-1.5 text-xs text-slate-500">
             <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
             Source: News article headlines

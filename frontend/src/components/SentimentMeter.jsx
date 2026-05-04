@@ -86,12 +86,6 @@ export default function SentimentMeter({ sentiment }) {
           (very positive), then averaged into a compound score. The letter grade maps the compound score to an A–F scale.
         </p>
         <div className="flex flex-wrap gap-3 mt-3">
-          {reddit_count !== undefined && (
-            <div className="flex items-center gap-1.5 text-xs text-slate-500">
-              <div className="w-1.5 h-1.5 rounded-full bg-orange-400" />
-              {reddit_count} Reddit posts analyzed
-            </div>
-          )}
           {news_count !== undefined && (
             <div className="flex items-center gap-1.5 text-xs text-slate-500">
               <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />

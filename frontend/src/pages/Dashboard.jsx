@@ -124,7 +124,7 @@ export default function Dashboard() {
         {loading && (
           <div className="flex flex-col items-center gap-3 text-slate-400 py-24 justify-center">
             <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
-            <span>Analyzing <span className="text-white font-medium">"{query}"</span> across news and Reddit...</span>
+            <span>Analyzing <span className="text-white font-medium">"{query}"</span> across news sources...</span>
           </div>
         )}
 
@@ -134,7 +134,7 @@ export default function Dashboard() {
           <div className="flex flex-col items-center justify-center py-32 text-center">
             <div className="w-12 h-12 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-2xl mb-4">🔍</div>
             <h2 className="text-white font-semibold text-lg mb-2">Ready to analyze</h2>
-            <p className="text-slate-500 text-sm max-w-sm">Type any company, stock, game, or topic in the search bar above to see live sentiment, news, and Reddit discussion data.</p>
+            <p className="text-slate-500 text-sm max-w-sm">Type any company, stock, game, or topic in the search bar above to see live sentiment scores, news coverage, and trend data.</p>
           </div>
         )}
 
