@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { getCities, getCityLookup } from '../services/api'
+import { getCityLookup } from '../services/api'
 import CityDetailModal from '../components/CityDetailModal'
+import ALL_CITIES from '../data/cityData'
 
 const LABEL_COLORS = {
   Explosive: 'text-cyan-400 bg-cyan-950/40 border-cyan-900/50',
@@ -26,11 +27,9 @@ export default function Cities() {
   const [lookupError, setLookupError] = useState('')
 
   useEffect(() => {
-    getCities().then((res) => {
-      setCities(res.data)
-      setFiltered(res.data)
-      setLoading(false)
-    })
+    setCities(ALL_CITIES)
+    setFiltered(ALL_CITIES)
+    setLoading(false)
   }, [])
 
   useEffect(() => {
