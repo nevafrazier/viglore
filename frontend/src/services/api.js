@@ -13,3 +13,4 @@ export const getCompanyOverview = (ticker) => api.get('/company', { params: { ti
 export const getCitySignal = (q) => api.get('/city-signal', { params: { q } })
 export const getStocktwits = (ticker) => api.get('/stocktwits', { params: { ticker } })
 export const getCityLookup = (city) => api.get('/city-lookup', { params: { city } })
+export const getTrendingTopics = () => api.get('/trending')

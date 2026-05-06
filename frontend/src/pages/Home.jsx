@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import TrendingTopics from '../components/TrendingTopics'
 
 const QUICK_SEARCHES = ['NVIDIA', 'OpenAI', 'Minecraft', 'Tesla', 'Anthropic', 'Bitcoin', 'Apple', 'Cybersecurity']
 
@@ -120,6 +121,9 @@ export default function Home() {
           ))}
         </div>
       </div>
+
+      {/* Trending topics */}
+      <TrendingTopics />
 
       {/* Features grid */}
       <div className="max-w-5xl mx-auto px-6 mb-20">
