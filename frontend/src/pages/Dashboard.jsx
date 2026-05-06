@@ -142,23 +142,28 @@ export default function Dashboard() {
           <div className="space-y-6">
             {/* Disambiguation bar */}
             {suggestions.length > 1 && (
-              <div className="bg-slate-900 border border-slate-800 rounded-xl px-5 py-3 flex flex-wrap items-center gap-2">
-                <span className="text-slate-500 text-xs shrink-0">Showing overview for:</span>
-                {suggestions.map((s) => (
-                  <button
-                    key={s.title}
-                    onClick={() => selectSuggestion(s.title)}
-                    title={s.description}
-                    className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                      selectedTitle === s.title
-                        ? 'bg-cyan-500/20 border-cyan-500/60 text-cyan-300 font-semibold'
-                        : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:border-slate-500'
-                    }`}
-                  >
-                    {s.title}
-                  </button>
-                ))}
-                <span className="text-slate-700 text-xs ml-auto hidden sm:block">Click to switch overview</span>
+              <div className="bg-slate-900 border border-slate-700 rounded-xl px-6 py-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                  <span className="text-white text-sm font-semibold">Showing overview for</span>
+                  <span className="text-slate-500 text-sm hidden sm:block">— select a topic to refine results</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {suggestions.map((s) => (
+                    <button
+                      key={s.title}
+                      onClick={() => selectSuggestion(s.title)}
+                      title={s.description}
+                      className={`text-sm px-4 py-2 rounded-lg border font-medium transition-all ${
+                        selectedTitle === s.title
+                          ? 'bg-cyan-500/20 border-cyan-500/60 text-cyan-300'
+                          : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:border-slate-500'
+                      }`}
+                    >
+                      {s.title}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 
