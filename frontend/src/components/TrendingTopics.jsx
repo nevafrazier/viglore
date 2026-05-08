@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getTrendingTopics } from '../services/api'
 
+const NEWS_API_KEY = 'c496c160c8b7409aabd2b464dc3505c8'
+const CATEGORIES = ['technology', 'business', 'science', 'health']
+const CATEGORY_LABELS = { technology: 'Tech', business: 'Business', science: 'Science', health: 'Health' }
 const FILTERS = ['All', 'Tech', 'Business', 'Science', 'Health']
 
 const CATEGORY_ACCENT = {
@@ -45,9 +47,21 @@ function timeAgo(publishedAt) {
   return `${Math.floor(hours / 24)}d ago`
 }
 
-function SentimentBadge({ score }) {
-  if (score >= 0.15) return <span className="text-xs px-2 py-0.5 rounded border bg-green-900/40 text-green-400 border-green-800/60 font-medium">Positive</span>
-  if (score <= -0.15) return <span className="text-xs px-2 py-0.5 rounded border bg-red-900/40 text-red-400 border-red-800/60 font-medium">Negative</span>
+function sentimentScore(title) {
+  const pos = ['surge', 'soar', 'gain', 'rise', 'win', 'record', 'growth', 'boost', 'launch', 'breakthrough', 'success', 'strong', 'profit', 'rally', 'high', 'best', 'lead', 'top', 'innovation', 'advance']
+  const neg = ['fall', 'drop', 'crash', 'loss', 'fail', 'cut', 'layoff', 'down', 'decline', 'threat', 'risk', 'concern', 'warn', 'miss', 'low', 'problem', 'crisis', 'ban', 'fine', 'sue', 'recall']
+  const lower = title.toLowerCase()
+  const posHits = pos.filter(w => lower.includes(w)).length
+  const negHits = neg.filter(w => lower.includes(w)).length
+  if (posHits > negHits) return 'positive'
+  if (negHits > posHits) return 'negative'
+  return 'neutral'
+}
+
+function SentimentBadge({ title }) {
+  const s = sentimentScore(title)
+  if (s === 'positive') return <span className="text-xs px-2 py-0.5 rounded border bg-green-900/40 text-green-400 border-green-800/60 font-medium">Positive</span>
+  if (s === 'negative') return <span className="text-xs px-2 py-0.5 rounded border bg-red-900/40 text-red-400 border-red-800/60 font-medium">Negative</span>
   return <span className="text-xs px-2 py-0.5 rounded border bg-slate-800 text-slate-500 border-slate-700 font-medium">Neutral</span>
 }
 
@@ -74,15 +88,37 @@ export default function TrendingTopics() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    getTrendingTopics()
-      .then(res => setItems(res.data.trending || []))
-      .catch(() => {})
-      .finally(() => setLoading(false))
+    const fetchAll = async () => {
+      const results = []
+      await Promise.all(
+        CATEGORIES.map(async (cat) => {
+          try {
+            const res = await fetch(
+              `https://newsapi.org/v2/top-headlines?category=${cat}&language=en&pageSize=6&country=us&apiKey=${NEWS_API_KEY}`
+            )
+            const data = await res.json()
+            for (const a of data.articles || []) {
+              const title = (a.title || '').trim()
+              if (!title || title.includes('[Removed]')) continue
+              results.push({
+                title,
+                source: a.source?.name || '',
+                url: a.url || '',
+                category: cat,
+                category_label: CATEGORY_LABELS[cat],
+                published_at: a.publishedAt || '',
+              })
+            }
+          } catch { /* silent */ }
+        })
+      )
+      setItems(results)
+      setLoading(false)
+    }
+    fetchAll()
   }, [])
 
-  const filtered = filter === 'All'
-    ? items
-    : items.filter(i => i.category_label === filter)
+  const filtered = filter === 'All' ? items : items.filter(i => i.category_label === filter)
 
   const handleAnalyze = (title) => {
     const q = extractQuery(title)
@@ -91,8 +127,6 @@ export default function TrendingTopics() {
 
   return (
     <div className="max-w-5xl mx-auto px-6 mb-24">
-
-      {/* Section header */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -102,11 +136,10 @@ export default function TrendingTopics() {
             </span>
           </div>
           <h2 className="text-white text-2xl font-bold">What's Trending Right Now</h2>
-          <p className="text-slate-500 text-sm mt-1">Top stories across markets, tech, science, and health — updated every 10 minutes</p>
+          <p className="text-slate-500 text-sm mt-1">Top stories across markets, tech, science, and health</p>
         </div>
       </div>
 
-      {/* Category filter pills */}
       <div className="flex flex-wrap gap-2 mb-8">
         {FILTERS.map(f => (
           <button
@@ -123,46 +156,31 @@ export default function TrendingTopics() {
         ))}
       </div>
 
-      {/* Cards grid */}
       <div className="grid md:grid-cols-3 gap-4">
         {loading
           ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
           : filtered.length === 0
-          ? (
-            <p className="text-slate-600 col-span-3 text-center py-16">No trending topics found.</p>
-          )
+          ? <p className="text-slate-600 col-span-3 text-center py-16">No trending topics found.</p>
           : filtered.slice(0, 9).map((item, i) => (
             <div
               key={i}
               className={`bg-slate-900 border border-slate-800 border-l-4 ${CATEGORY_ACCENT[item.category]} rounded-xl p-5 flex flex-col justify-between hover:border-slate-700 hover:bg-slate-900/80 transition-all`}
             >
               <div>
-                {/* Badges row */}
                 <div className="flex items-center gap-2 mb-4 flex-wrap">
                   <span className={`text-xs font-semibold px-2.5 py-1 rounded border ${CATEGORY_BADGE[item.category]}`}>
                     {item.category_label}
                   </span>
-                  <SentimentBadge score={item.sentiment} />
+                  <SentimentBadge title={item.title} />
                 </div>
-
-                {/* Headline */}
-                <p className="text-white text-sm font-semibold leading-snug line-clamp-3 mb-4 group-hover:text-cyan-100 transition-colors">
+                <p className="text-white text-sm font-semibold leading-snug line-clamp-3 mb-4">
                   {item.title.replace(/\s*-\s*[^-]+$/, '')}
                 </p>
-
-                {/* Source + time */}
                 <div className="flex items-center gap-1.5 text-slate-500 text-xs">
                   <span>{item.source}</span>
-                  {item.published_at && (
-                    <>
-                      <span>·</span>
-                      <span>{timeAgo(item.published_at)}</span>
-                    </>
-                  )}
+                  {item.published_at && <><span>·</span><span>{timeAgo(item.published_at)}</span></>}
                 </div>
               </div>
-
-              {/* Analyze button */}
               <button
                 onClick={() => handleAnalyze(item.title)}
                 className="mt-5 w-full py-2 rounded-lg text-xs font-bold tracking-wide text-cyan-400 border border-cyan-900/60 bg-cyan-950/30 hover:bg-cyan-500 hover:text-slate-950 hover:border-cyan-500 transition-all"
