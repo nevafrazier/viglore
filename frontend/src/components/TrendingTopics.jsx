@@ -1,23 +1,30 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const NEWS_API_KEY = 'c496c160c8b7409aabd2b464dc3505c8'
-const CATEGORIES = ['technology', 'business', 'science', 'health']
-const CATEGORY_LABELS = { technology: 'Tech', business: 'Business', science: 'Science', health: 'Health' }
+const GUARDIAN_KEY = 'test'
+const GUARDIAN_BASE = 'https://content.guardianapis.com/search'
+
+const CATEGORIES = [
+  { id: 'technology',         label: 'Tech' },
+  { id: 'business',           label: 'Business' },
+  { id: 'science',            label: 'Science' },
+  { id: 'society',            label: 'Health' },
+]
+
 const FILTERS = ['All', 'Tech', 'Business', 'Science', 'Health']
 
 const CATEGORY_ACCENT = {
-  technology: 'border-l-cyan-500',
-  business:   'border-l-blue-500',
-  science:    'border-l-violet-500',
-  health:     'border-l-emerald-500',
+  Tech:     'border-l-cyan-500',
+  Business: 'border-l-blue-500',
+  Science:  'border-l-violet-500',
+  Health:   'border-l-emerald-500',
 }
 
 const CATEGORY_BADGE = {
-  technology: 'bg-cyan-900/50 text-cyan-400 border-cyan-800/60',
-  business:   'bg-blue-900/50 text-blue-400 border-blue-800/60',
-  science:    'bg-violet-900/50 text-violet-400 border-violet-800/60',
-  health:     'bg-emerald-900/50 text-emerald-400 border-emerald-800/60',
+  Tech:     'bg-cyan-900/50 text-cyan-400 border-cyan-800/60',
+  Business: 'bg-blue-900/50 text-blue-400 border-blue-800/60',
+  Science:  'bg-violet-900/50 text-violet-400 border-violet-800/60',
+  Health:   'bg-emerald-900/50 text-emerald-400 border-emerald-800/60',
 }
 
 const STOP_WORDS = new Set([
@@ -26,11 +33,11 @@ const STOP_WORDS = new Set([
   'over','about','from','that','this','has','have','will','be','been','into',
   'how','why','what','when','where','not','no','so','than','out','get','more',
   'could','would','may','can','do','did','does','amid','vs','just','now',
-  'us','u.s.','also','back','off','two','three','one','first','here','report',
+  'us','also','back','off','two','three','one','first','here','report','why',
 ])
 
 function extractQuery(title) {
-  const cleaned = title.replace(/\s*[-|]\s*[A-Za-z0-9\s.]+$/, '').trim()
+  const cleaned = title.replace(/\s*[-|:]\s*[A-Za-z0-9\s.]+$/, '').trim()
   const words = cleaned
     .split(/[\s,]+/)
     .map(w => w.replace(/[^a-zA-Z0-9]/g, ''))
@@ -38,28 +45,29 @@ function extractQuery(title) {
   return words.slice(0, 3).join(' ') || cleaned.split(' ').slice(0, 3).join(' ')
 }
 
-function timeAgo(publishedAt) {
-  if (!publishedAt) return ''
-  const diff = Date.now() - new Date(publishedAt).getTime()
+function timeAgo(dateStr) {
+  if (!dateStr) return ''
+  const diff = Date.now() - new Date(dateStr).getTime()
   const hours = Math.floor(diff / 3600000)
   if (hours < 1) return 'Just now'
   if (hours < 24) return `${hours}h ago`
   return `${Math.floor(hours / 24)}d ago`
 }
 
-function sentimentScore(title) {
-  const pos = ['surge', 'soar', 'gain', 'rise', 'win', 'record', 'growth', 'boost', 'launch', 'breakthrough', 'success', 'strong', 'profit', 'rally', 'high', 'best', 'lead', 'top', 'innovation', 'advance']
-  const neg = ['fall', 'drop', 'crash', 'loss', 'fail', 'cut', 'layoff', 'down', 'decline', 'threat', 'risk', 'concern', 'warn', 'miss', 'low', 'problem', 'crisis', 'ban', 'fine', 'sue', 'recall']
+const POS_WORDS = ['surge','soar','gain','rise','win','record','growth','boost','launch','breakthrough','success','strong','profit','rally','innovation','advance','award','approve','celebrate']
+const NEG_WORDS = ['fall','drop','crash','loss','fail','cut','layoff','decline','threat','risk','concern','warn','miss','problem','crisis','ban','fine','sue','recall','dead','attack','fraud']
+
+function getSentiment(title) {
   const lower = title.toLowerCase()
-  const posHits = pos.filter(w => lower.includes(w)).length
-  const negHits = neg.filter(w => lower.includes(w)).length
-  if (posHits > negHits) return 'positive'
-  if (negHits > posHits) return 'negative'
+  const pos = POS_WORDS.filter(w => lower.includes(w)).length
+  const neg = NEG_WORDS.filter(w => lower.includes(w)).length
+  if (pos > neg) return 'positive'
+  if (neg > pos) return 'negative'
   return 'neutral'
 }
 
 function SentimentBadge({ title }) {
-  const s = sentimentScore(title)
+  const s = getSentiment(title)
   if (s === 'positive') return <span className="text-xs px-2 py-0.5 rounded border bg-green-900/40 text-green-400 border-green-800/60 font-medium">Positive</span>
   if (s === 'negative') return <span className="text-xs px-2 py-0.5 rounded border bg-red-900/40 text-red-400 border-red-800/60 font-medium">Negative</span>
   return <span className="text-xs px-2 py-0.5 rounded border bg-slate-800 text-slate-500 border-slate-700 font-medium">Neutral</span>
@@ -91,22 +99,20 @@ export default function TrendingTopics() {
     const fetchAll = async () => {
       const results = []
       await Promise.all(
-        CATEGORIES.map(async (cat) => {
+        CATEGORIES.map(async ({ id, label }) => {
           try {
-            const res = await fetch(
-              `https://newsapi.org/v2/top-headlines?category=${cat}&language=en&pageSize=6&country=us&apiKey=${NEWS_API_KEY}`
-            )
+            const url = `${GUARDIAN_BASE}?section=${id}&api-key=${GUARDIAN_KEY}&page-size=6&order-by=newest&show-fields=trailText`
+            const res = await fetch(url)
             const data = await res.json()
-            for (const a of data.articles || []) {
-              const title = (a.title || '').trim()
-              if (!title || title.includes('[Removed]')) continue
+            for (const item of data?.response?.results || []) {
+              const title = item.webTitle || ''
+              if (!title) continue
               results.push({
                 title,
-                source: a.source?.name || '',
-                url: a.url || '',
-                category: cat,
-                category_label: CATEGORY_LABELS[cat],
-                published_at: a.publishedAt || '',
+                source: 'The Guardian',
+                url: item.webUrl || '',
+                category_label: label,
+                published_at: item.webPublicationDate || '',
               })
             }
           } catch { /* silent */ }
@@ -127,17 +133,13 @@ export default function TrendingTopics() {
 
   return (
     <div className="max-w-5xl mx-auto px-6 mb-24">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-cyan-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-              Live
-            </span>
-          </div>
-          <h2 className="text-white text-2xl font-bold">What's Trending Right Now</h2>
-          <p className="text-slate-500 text-sm mt-1">Top stories across markets, tech, science, and health</p>
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+          <span className="text-xs font-bold uppercase tracking-widest text-cyan-400">Live</span>
         </div>
+        <h2 className="text-white text-2xl font-bold">What's Trending Right Now</h2>
+        <p className="text-slate-500 text-sm mt-1">Top stories across markets, tech, science, and health</p>
       </div>
 
       <div className="flex flex-wrap gap-2 mb-8">
@@ -164,17 +166,17 @@ export default function TrendingTopics() {
           : filtered.slice(0, 9).map((item, i) => (
             <div
               key={i}
-              className={`bg-slate-900 border border-slate-800 border-l-4 ${CATEGORY_ACCENT[item.category]} rounded-xl p-5 flex flex-col justify-between hover:border-slate-700 hover:bg-slate-900/80 transition-all`}
+              className={`bg-slate-900 border border-slate-800 border-l-4 ${CATEGORY_ACCENT[item.category_label]} rounded-xl p-5 flex flex-col justify-between hover:border-slate-700 hover:bg-slate-900/80 transition-all`}
             >
               <div>
                 <div className="flex items-center gap-2 mb-4 flex-wrap">
-                  <span className={`text-xs font-semibold px-2.5 py-1 rounded border ${CATEGORY_BADGE[item.category]}`}>
+                  <span className={`text-xs font-semibold px-2.5 py-1 rounded border ${CATEGORY_BADGE[item.category_label]}`}>
                     {item.category_label}
                   </span>
                   <SentimentBadge title={item.title} />
                 </div>
                 <p className="text-white text-sm font-semibold leading-snug line-clamp-3 mb-4">
-                  {item.title.replace(/\s*-\s*[^-]+$/, '')}
+                  {item.title}
                 </p>
                 <div className="flex items-center gap-1.5 text-slate-500 text-xs">
                   <span>{item.source}</span>
