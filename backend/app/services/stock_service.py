@@ -1,17 +1,12 @@
-import os
-import httpx
-from dotenv import load_dotenv
+import time
+import yfinance as yf
 
-load_dotenv()
-
-BASE_URL = "https://www.alphavantage.co/query"
-
-
-def _key():
-    return os.getenv("ALPHA_VANTAGE_KEY")
+_quote_cache = {}
+_overview_cache = {}
+CACHE_TTL = 900  # 15 minutes
 
 
-def _fmt_large(val: str) -> str:
+def _fmt_large(val) -> str:
     try:
         n = float(val)
         if n >= 1_000_000_000_000:
@@ -22,55 +17,75 @@ def _fmt_large(val: str) -> str:
             return f"${n / 1_000_000:.2f}M"
         return f"${n:,.0f}"
     except Exception:
-        return val or "N/A"
+        return str(val) if val else "N/A"
+
+
+def _fmt(val, decimals=2) -> str:
+    try:
+        return f"{float(val):.{decimals}f}"
+    except Exception:
+        return "N/A"
 
 
 async def get_stock_quote(ticker: str) -> dict:
-    async with httpx.AsyncClient() as client:
-        resp = await client.get(BASE_URL, params={
-            "function": "GLOBAL_QUOTE",
-            "symbol": ticker.upper(),
-            "apikey": _key(),
-        })
-        data = resp.json().get("Global Quote", {})
-        if not data:
-            return {"ticker": ticker.upper(), "error": "Ticker not found or API limit reached"}
-        return {
-            "ticker": data.get("01. symbol"),
-            "price": data.get("05. price"),
-            "change": data.get("09. change"),
-            "change_percent": data.get("10. change percent"),
-            "volume": data.get("06. volume"),
-            "high": data.get("03. high"),
-            "low": data.get("04. low"),
-            "prev_close": data.get("08. previous close"),
+    key = ticker.upper()
+    cached = _quote_cache.get(key)
+    if cached and time.time() - cached["ts"] < CACHE_TTL:
+        return cached["data"]
+
+    try:
+        t = yf.Ticker(key)
+        fi = t.fast_info
+        price = fi.last_price
+        prev = fi.previous_close
+        change = price - prev
+        change_pct = (change / prev * 100) if prev else 0
+
+        data = {
+            "ticker": key,
+            "price": _fmt(price),
+            "change": _fmt(change),
+            "change_percent": f"{_fmt(change_pct)}%",
+            "volume": str(int(fi.three_month_average_volume or 0)),
+            "high": _fmt(fi.day_high),
+            "low": _fmt(fi.day_low),
+            "prev_close": _fmt(prev),
         }
+        _quote_cache[key] = {"data": data, "ts": time.time()}
+        return data
+    except Exception:
+        return {"ticker": key, "error": "Ticker not found or data unavailable"}
 
 
 async def get_company_overview(ticker: str) -> dict | None:
-    async with httpx.AsyncClient() as client:
-        resp = await client.get(BASE_URL, params={
-            "function": "OVERVIEW",
-            "symbol": ticker.upper(),
-            "apikey": _key(),
-        })
-        data = resp.json()
-        if not data or "Symbol" not in data:
+    key = ticker.upper()
+    cached = _overview_cache.get(key)
+    if cached and time.time() - cached["ts"] < CACHE_TTL:
+        return cached["data"]
+
+    try:
+        info = yf.Ticker(key).info
+        if not info or info.get("quoteType") is None:
             return None
-        return {
-            "name": data.get("Name"),
-            "sector": data.get("Sector"),
-            "industry": data.get("Industry"),
-            "description": data.get("Description"),
-            "market_cap": _fmt_large(data.get("MarketCapitalization", "")),
-            "pe_ratio": data.get("PERatio"),
-            "eps": data.get("EPS"),
-            "revenue": _fmt_large(data.get("RevenueTTM", "")),
-            "profit_margin": data.get("ProfitMargin"),
-            "week_52_high": data.get("52WeekHigh"),
-            "week_52_low": data.get("52WeekLow"),
-            "analyst_target": data.get("AnalystTargetPrice"),
-            "beta": data.get("Beta"),
-            "dividend_yield": data.get("DividendYield"),
-            "exchange": data.get("Exchange"),
+
+        data = {
+            "name": info.get("longName") or info.get("shortName"),
+            "sector": info.get("sector"),
+            "industry": info.get("industry"),
+            "description": info.get("longBusinessSummary"),
+            "market_cap": _fmt_large(info.get("marketCap")),
+            "pe_ratio": _fmt(info.get("trailingPE")),
+            "eps": _fmt(info.get("trailingEps")),
+            "revenue": _fmt_large(info.get("totalRevenue")),
+            "profit_margin": _fmt(info.get("profitMargins")),
+            "week_52_high": _fmt(info.get("fiftyTwoWeekHigh")),
+            "week_52_low": _fmt(info.get("fiftyTwoWeekLow")),
+            "analyst_target": _fmt(info.get("targetMeanPrice")),
+            "beta": _fmt(info.get("beta")),
+            "dividend_yield": _fmt(info.get("dividendYield")),
+            "exchange": info.get("exchange"),
         }
+        _overview_cache[key] = {"data": data, "ts": time.time()}
+        return data
+    except Exception:
+        return None
