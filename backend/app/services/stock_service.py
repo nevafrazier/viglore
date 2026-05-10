@@ -1,28 +1,36 @@
+import os
 import time
-import yfinance as yf
+import asyncio
+import httpx
+from dotenv import load_dotenv
 
+load_dotenv()
+
+BASE = "https://finnhub.io/api/v1"
 _quote_cache = {}
 _overview_cache = {}
 CACHE_TTL = 900  # 15 minutes
 
 
-def _fmt_large(val) -> str:
-    try:
-        n = float(val)
-        if n >= 1_000_000_000_000:
-            return f"${n / 1_000_000_000_000:.2f}T"
-        if n >= 1_000_000_000:
-            return f"${n / 1_000_000_000:.2f}B"
-        if n >= 1_000_000:
-            return f"${n / 1_000_000:.2f}M"
-        return f"${n:,.0f}"
-    except Exception:
-        return str(val) if val else "N/A"
+def _key():
+    return os.getenv("FINNHUB_KEY")
 
 
 def _fmt(val, decimals=2) -> str:
     try:
         return f"{float(val):.{decimals}f}"
+    except Exception:
+        return "N/A"
+
+
+def _fmt_large(val) -> str:
+    try:
+        n = float(val)
+        if n >= 1_000_000:
+            return f"${n / 1_000:.2f}B"
+        if n >= 1_000:
+            return f"${n:.2f}M"
+        return f"${n:,.0f}"
     except Exception:
         return "N/A"
 
@@ -34,22 +42,25 @@ async def get_stock_quote(ticker: str) -> dict:
         return cached["data"]
 
     try:
-        t = yf.Ticker(key)
-        fi = t.fast_info
-        price = fi.last_price
-        prev = fi.previous_close
-        change = price - prev
-        change_pct = (change / prev * 100) if prev else 0
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.get(f"{BASE}/quote", params={"symbol": key, "token": _key()})
+            q = resp.json()
+
+        if not q or q.get("c", 0) == 0:
+            return {"ticker": key, "error": "Ticker not found or data unavailable"}
+
+        change = q.get("d", 0)
+        change_pct = q.get("dp", 0)
 
         data = {
             "ticker": key,
-            "price": _fmt(price),
+            "price": _fmt(q.get("c")),
             "change": _fmt(change),
             "change_percent": f"{_fmt(change_pct)}%",
-            "volume": str(int(fi.three_month_average_volume or 0)),
-            "high": _fmt(fi.day_high),
-            "low": _fmt(fi.day_low),
-            "prev_close": _fmt(prev),
+            "volume": "N/A",
+            "high": _fmt(q.get("h")),
+            "low": _fmt(q.get("l")),
+            "prev_close": _fmt(q.get("pc")),
         }
         _quote_cache[key] = {"data": data, "ts": time.time()}
         return data
@@ -64,26 +75,33 @@ async def get_company_overview(ticker: str) -> dict | None:
         return cached["data"]
 
     try:
-        info = yf.Ticker(key).info
-        if not info or info.get("quoteType") is None:
+        async with httpx.AsyncClient(timeout=10) as client:
+            profile_resp, metric_resp = await asyncio.gather(
+                client.get(f"{BASE}/stock/profile2", params={"symbol": key, "token": _key()}),
+                client.get(f"{BASE}/stock/metric", params={"symbol": key, "metric": "all", "token": _key()}),
+            )
+            profile = profile_resp.json()
+            metrics = metric_resp.json().get("metric", {})
+
+        if not profile or not profile.get("name"):
             return None
 
         data = {
-            "name": info.get("longName") or info.get("shortName"),
-            "sector": info.get("sector"),
-            "industry": info.get("industry"),
-            "description": info.get("longBusinessSummary"),
-            "market_cap": _fmt_large(info.get("marketCap")),
-            "pe_ratio": _fmt(info.get("trailingPE")),
-            "eps": _fmt(info.get("trailingEps")),
-            "revenue": _fmt_large(info.get("totalRevenue")),
-            "profit_margin": _fmt(info.get("profitMargins")),
-            "week_52_high": _fmt(info.get("fiftyTwoWeekHigh")),
-            "week_52_low": _fmt(info.get("fiftyTwoWeekLow")),
-            "analyst_target": _fmt(info.get("targetMeanPrice")),
-            "beta": _fmt(info.get("beta")),
-            "dividend_yield": _fmt(info.get("dividendYield")),
-            "exchange": info.get("exchange"),
+            "name": profile.get("name"),
+            "sector": profile.get("finnhubIndustry"),
+            "industry": profile.get("finnhubIndustry"),
+            "description": None,
+            "market_cap": _fmt_large(profile.get("marketCapitalization")),
+            "pe_ratio": _fmt(metrics.get("peBasicExclExtraTTM")),
+            "eps": _fmt(metrics.get("epsBasicExclExtraAnnual")),
+            "revenue": _fmt_large(metrics.get("revenuePerShareAnnual")),
+            "profit_margin": _fmt(metrics.get("netProfitMarginAnnual")),
+            "week_52_high": _fmt(metrics.get("52WeekHigh")),
+            "week_52_low": _fmt(metrics.get("52WeekLow")),
+            "analyst_target": _fmt(metrics.get("targetPrice")),
+            "beta": _fmt(metrics.get("beta")),
+            "dividend_yield": _fmt(metrics.get("dividendYieldIndicatedAnnual")),
+            "exchange": profile.get("exchange"),
         }
         _overview_cache[key] = {"data": data, "ts": time.time()}
         return data
