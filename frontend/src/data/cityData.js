@@ -901,6 +901,204 @@ const CITIES = [
     colleges: ["Louisiana State University", "Southern University", "Our Lady of the Lake College"],
     major_companies: ["ExxonMobil (major refinery)", "Turner Industries", "Amedisys (HQ)", "Shaw Group", "Performance Energy Services"]
   },
+  {
+    name: "San Jose, CA", tech_score: 97, growth_label: "Strong",
+    total_tech_jobs: 31000, ai_jobs: 6800, finance_tech_jobs: 2200,
+    avg_salary: 175000, startup_activity: "Very High",
+    top_industries: ["Semiconductors", "AI & Machine Learning", "Cloud Computing", "Cybersecurity"],
+    summary: "San Jose is the capital of Silicon Valley and home to some of the most valuable technology companies in the world. Intel, Cisco, Adobe, and NVIDIA are headquartered here, surrounded by a dense ecosystem of chip designers, AI researchers, and enterprise software companies. The city has the highest concentration of engineering patents per capita in the US.",
+    cost_of_living: { index: 185, note: "Among the most expensive cities in the US. Top-tier salaries are essential.", avg_rent_1br: 3200, avg_home_price: 1350000 },
+    weather: { description: "Mediterranean climate. Warm sunny summers, mild dry winters.", avg_summer: "82°F (28°C)", avg_winter: "50°F (10°C)", sunny_days: 300 },
+    colleges: ["San Jose State University", "Santa Clara University", "Stanford (nearby)"],
+    major_companies: ["Cisco (HQ)", "Adobe (HQ)", "PayPal (HQ)", "eBay (HQ)", "Zoom", "Western Digital", "Brocade", "Sanmina"]
+  },
+  {
+    name: "Santa Clara, CA", tech_score: 96, growth_label: "Strong",
+    total_tech_jobs: 22000, ai_jobs: 5400, finance_tech_jobs: 1800,
+    avg_salary: 178000, startup_activity: "Very High",
+    top_industries: ["Semiconductors", "AI Infrastructure", "Cloud Networking", "Enterprise Tech"],
+    summary: "Santa Clara sits at the geographic center of Silicon Valley and hosts the headquarters of NVIDIA, Intel, and dozens of semiconductor and cloud networking firms. The city's proximity to Stanford University and a century-long history of chip manufacturing make it the world's leading hardware and AI infrastructure hub.",
+    cost_of_living: { index: 188, note: "Extremely expensive, even by Bay Area standards.", avg_rent_1br: 3300, avg_home_price: 1400000 },
+    weather: { description: "Warm and sunny nearly year-round. Mild wet winters.", avg_summer: "83°F (28°C)", avg_winter: "50°F (10°C)", sunny_days: 305 },
+    colleges: ["Santa Clara University", "Mission College", "Stanford (nearby)"],
+    major_companies: ["NVIDIA (HQ)", "Intel (campus)", "ServiceNow (HQ)", "Palo Alto Networks", "Agilent Technologies", "McAfee"]
+  },
+  {
+    name: "Provo, UT", tech_score: 82, growth_label: "Explosive",
+    total_tech_jobs: 5800, ai_jobs: 980, finance_tech_jobs: 720,
+    avg_salary: 112000, startup_activity: "Very High",
+    top_industries: ["SaaS", "EdTech", "Cybersecurity", "Fintech"],
+    summary: "Provo anchors Utah's Silicon Slopes corridor and is one of the fastest-growing tech ecosystems in the country. Brigham Young University produces a consistent pipeline of engineering and CS talent, while companies like Qualtrics, Domo, and Ancestry have established the city as a legitimate startup launchpad with a fraction of the Bay Area's cost.",
+    cost_of_living: { index: 88, note: "Well below national average. Exceptional value for a fast-growing tech market.", avg_rent_1br: 1320, avg_home_price: 430000 },
+    weather: { description: "Four seasons. Snowy winters with world-class ski access. Warm dry summers.", avg_summer: "92°F (33°C)", avg_winter: "30°F (-1°C)", sunny_days: 222 },
+    colleges: ["Brigham Young University", "Utah Valley University", "Western Governors University (HQ)"],
+    major_companies: ["Qualtrics (HQ)", "Domo (HQ)", "Ancestry (HQ)", "Vivint (HQ)", "Nu Skin", "Entrata"]
+  },
+  {
+    name: "Ann Arbor, MI", tech_score: 78, growth_label: "Strong",
+    total_tech_jobs: 4800, ai_jobs: 890, finance_tech_jobs: 620,
+    avg_salary: 108000, startup_activity: "High",
+    top_industries: ["Autonomous Vehicles", "HealthTech", "AI Research", "EdTech"],
+    summary: "Ann Arbor is Michigan's premier tech city, powered by the University of Michigan's world-class engineering and computer science programs. The city is a global hub for autonomous vehicle research, with Ford, GM, Toyota, and Waymo all operating major AV research centers. A thriving startup scene has emerged around U of M's deep research capabilities.",
+    cost_of_living: { index: 94, note: "Slightly below US average. College-town pricing keeps costs manageable.", avg_rent_1br: 1400, avg_home_price: 390000 },
+    weather: { description: "Cold snowy winters. Warm summers. Classic Midwest four-season climate.", avg_summer: "82°F (28°C)", avg_winter: "26°F (-3°C)", sunny_days: 181 },
+    colleges: ["University of Michigan", "Eastern Michigan University", "Washtenaw Community College"],
+    major_companies: ["Ford (AV research)", "GM (AV research)", "Toyota Research Institute", "Waymo (center)", "Duo Security", "StockX"]
+  },
+  {
+    name: "Tempe, AZ", tech_score: 80, growth_label: "Explosive",
+    total_tech_jobs: 5200, ai_jobs: 820, finance_tech_jobs: 1100,
+    avg_salary: 109000, startup_activity: "High",
+    top_industries: ["Fintech", "EdTech", "SaaS", "Cybersecurity"],
+    summary: "Tempe is the innovation center of the Phoenix metro, anchored by Arizona State University — the largest public university in the US by enrollment. The city has attracted major fintech and SaaS companies seeking access to ASU's engineering talent pipeline at a fraction of coastal costs. GoDaddy, Axway, and a growing number of fintech startups call Tempe home.",
+    cost_of_living: { index: 94, note: "Below US average. One of the most affordable tech markets in the Sun Belt.", avg_rent_1br: 1450, avg_home_price: 395000 },
+    weather: { description: "Desert climate. Extremely hot summers. Mild, sunny winters.", avg_summer: "105°F (41°C)", avg_winter: "60°F (16°C)", sunny_days: 299 },
+    colleges: ["Arizona State University", "University of Advancing Technology", "Tempe community colleges"],
+    major_companies: ["GoDaddy (HQ)", "Axway", "Insight Direct", "Carvana (tech)", "DriveTime", "Bridgepoint Education"]
+  },
+  {
+    name: "Las Vegas, NV", tech_score: 72, growth_label: "Strong",
+    total_tech_jobs: 4100, ai_jobs: 610, finance_tech_jobs: 780,
+    avg_salary: 98000, startup_activity: "Moderate",
+    top_industries: ["Hospitality Tech", "Gaming Tech", "Cybersecurity", "Smart Infrastructure"],
+    summary: "Las Vegas is rapidly diversifying beyond hospitality, emerging as a legitimate tech hub with no state income tax and comparatively low real estate costs. The city's hospitality industry drives outsized demand for AI-powered customer experience, cybersecurity, and data analytics talent. Oracle's campus and a growing startup scene are accelerating the transition.",
+    cost_of_living: { index: 97, note: "Near US average. No state income tax is a significant financial advantage.", avg_rent_1br: 1580, avg_home_price: 420000 },
+    weather: { description: "Desert climate. Scorching summers. Mild, dry winters with rare snow.", avg_summer: "106°F (41°C)", avg_winter: "47°F (8°C)", sunny_days: 294 },
+    colleges: ["University of Nevada Las Vegas", "Nevada State College", "College of Southern Nevada"],
+    major_companies: ["Allegiant Air (tech)", "Switch (data centers)", "Oracle (campus)", "Zappos (HQ)", "MGM Resorts (tech)"]
+  },
+  {
+    name: "Jersey City, NJ", tech_score: 85, growth_label: "Strong",
+    total_tech_jobs: 7200, ai_jobs: 1800, finance_tech_jobs: 3400,
+    avg_salary: 142000, startup_activity: "High",
+    top_industries: ["Fintech", "Trading Technology", "AI & Machine Learning", "Cybersecurity"],
+    summary: "Jersey City serves as the financial technology backbone of the New York metro, hosting the back-office and trading technology operations of Goldman Sachs, JPMorgan Chase, and a dense cluster of quantitative trading firms. Lower real estate costs than Manhattan and direct PATH train access make it the preferred location for Wall Street's technology infrastructure.",
+    cost_of_living: { index: 138, note: "Significantly cheaper than Manhattan but still well above the US average.", avg_rent_1br: 2600, avg_home_price: 680000 },
+    weather: { description: "Four seasons. Cold winters, hot humid summers. Similar to NYC.", avg_summer: "84°F (29°C)", avg_winter: "32°F (0°C)", sunny_days: 225 },
+    colleges: ["New Jersey City University", "Saint Peter's University", "Stevens Institute of Technology (nearby)"],
+    major_companies: ["Goldman Sachs (tech hub)", "JPMorgan Chase (operations)", "Fidelity", "Charles Schwab (tech)", "Verisk Analytics"]
+  },
+  {
+    name: "Birmingham, AL", tech_score: 62, growth_label: "Emerging",
+    total_tech_jobs: 2800, ai_jobs: 380, finance_tech_jobs: 640,
+    avg_salary: 89000, startup_activity: "Moderate",
+    top_industries: ["HealthTech", "Fintech", "Cybersecurity", "Manufacturing Tech"],
+    summary: "Birmingham is Alabama's largest city and an emerging technology market anchored by its massive healthcare industry. UAB Health System, one of the nation's top academic medical centers, drives substantial demand for health IT, data analytics, and cybersecurity talent. A low cost of living and growing startup ecosystem are attracting remote workers from coastal cities.",
+    cost_of_living: { index: 82, note: "Significantly below US average. Excellent quality of life at a low cost.", avg_rent_1br: 1080, avg_home_price: 240000 },
+    weather: { description: "Humid subtropical. Hot summers, mild winters with occasional ice storms.", avg_summer: "91°F (33°C)", avg_winter: "44°F (7°C)", sunny_days: 213 },
+    colleges: ["University of Alabama at Birmingham", "Samford University", "Birmingham-Southern College"],
+    major_companies: ["Regions Financial (HQ)", "BBVA (tech center)", "UAB Hospital (health IT)", "Shipt (HQ)", "Protective Life"]
+  },
+  {
+    name: "Riverside, CA", tech_score: 64, growth_label: "Strong",
+    total_tech_jobs: 3200, ai_jobs: 480, finance_tech_jobs: 560,
+    avg_salary: 96000, startup_activity: "Moderate",
+    top_industries: ["Logistics Tech", "Healthcare IT", "Defense Tech", "Manufacturing Tech"],
+    summary: "Riverside anchors the Inland Empire, Southern California's fastest-growing metro and a major logistics and distribution hub. Proximity to the Ports of LA and Long Beach drives strong demand for supply chain technology, while UC Riverside's research programs support growing biotech and environmental tech sectors.",
+    cost_of_living: { index: 110, note: "Above US average but significantly cheaper than coastal SoCal.", avg_rent_1br: 1780, avg_home_price: 520000 },
+    weather: { description: "Warm and sunny. Hotter than coastal LA with occasional extreme heat days.", avg_summer: "98°F (37°C)", avg_winter: "55°F (13°C)", sunny_days: 285 },
+    colleges: ["University of California Riverside", "California Baptist University", "La Sierra University"],
+    major_companies: ["Amazon (major fulfillment hub)", "UPS (logistics tech)", "Kaiser Permanente", "Loma Linda University Health", "Stater Bros."]
+  },
+  {
+    name: "Greenville, SC", tech_score: 67, growth_label: "Explosive",
+    total_tech_jobs: 3100, ai_jobs: 420, finance_tech_jobs: 480,
+    avg_salary: 91000, startup_activity: "High",
+    top_industries: ["Advanced Manufacturing Tech", "Automotive Tech", "HealthTech", "SaaS"],
+    summary: "Greenville is one of the fastest-growing mid-size tech cities in the Southeast, anchored by BMW's North American manufacturing headquarters and a booming advanced manufacturing sector. The city's low cost of living, strong Clemson University pipeline, and BMW's supplier ecosystem have created a unique automotive technology cluster attracting remote workers and startups from larger metros.",
+    cost_of_living: { index: 86, note: "Well below US average. One of the best value propositions in the Southeast.", avg_rent_1br: 1250, avg_home_price: 320000 },
+    weather: { description: "Four seasons. Mild winters, warm summers. Rarely extreme in either direction.", avg_summer: "90°F (32°C)", avg_winter: "40°F (4°C)", sunny_days: 214 },
+    colleges: ["Furman University", "Bob Jones University", "Clemson University (nearby)"],
+    major_companies: ["BMW (North America HQ)", "Michelin (North America HQ)", "GE Power", "Hubbell", "Dentsply Sirona"]
+  },
+  {
+    name: "Savannah, GA", tech_score: 58, growth_label: "Emerging",
+    total_tech_jobs: 2100, ai_jobs: 290, finance_tech_jobs: 320,
+    avg_salary: 83000, startup_activity: "Moderate",
+    top_industries: ["Logistics Tech", "Defense Tech", "Creative Tech", "HealthTech"],
+    summary: "Savannah is one of the fastest-growing cities in the Southeast, anchored by the Port of Savannah — the largest single container terminal in North America. This logistics dominance drives strong demand for supply chain technology, while a thriving creative economy and Hyundai's new EV plant are diversifying the tech ecosystem.",
+    cost_of_living: { index: 90, note: "Below US average. Rapidly rising but still affordable relative to its growth.", avg_rent_1br: 1380, avg_home_price: 310000 },
+    weather: { description: "Subtropical. Hot humid summers. Mild winters. Coastal humidity year-round.", avg_summer: "92°F (33°C)", avg_winter: "52°F (11°C)", sunny_days: 218 },
+    colleges: ["Savannah College of Art and Design", "Georgia Southern University (campus)", "Savannah State University"],
+    major_companies: ["Georgia Ports Authority", "Hyundai (EV plant)", "Gulfstream Aerospace", "JCB", "Target (distribution)"]
+  },
+  {
+    name: "Rochester, NY", tech_score: 70, growth_label: "Strong",
+    total_tech_jobs: 3800, ai_jobs: 580, finance_tech_jobs: 540,
+    avg_salary: 97000, startup_activity: "Moderate",
+    top_industries: ["Photonics & Imaging", "Semiconductor Manufacturing", "HealthTech", "Defense Tech"],
+    summary: "Rochester is a hidden gem in US tech, home to the world's leading photonics and imaging research cluster. Kodak's legacy built deep optics and imaging expertise now applied to medical devices, LiDAR, and semiconductor manufacturing. The American Institute for Manufacturing Integrated Photonics and a University of Rochester spin-out ecosystem are driving a manufacturing tech revival.",
+    cost_of_living: { index: 82, note: "Well below US average. High value for a city with strong R&D infrastructure.", avg_rent_1br: 1150, avg_home_price: 230000 },
+    weather: { description: "Cold, very snowy winters. Warm summers. One of the cloudiest cities in the US.", avg_summer: "81°F (27°C)", avg_winter: "25°F (-4°C)", sunny_days: 154 },
+    colleges: ["University of Rochester", "Rochester Institute of Technology", "Monroe Community College"],
+    major_companies: ["Paychex (HQ)", "Wegmans (tech division)", "Xerox", "Carestream Health", "Ultragenyx"]
+  },
+  {
+    name: "Dayton, OH", tech_score: 65, growth_label: "Strong",
+    total_tech_jobs: 2900, ai_jobs: 410, finance_tech_jobs: 380,
+    avg_salary: 88000, startup_activity: "Moderate",
+    top_industries: ["Defense Tech", "Aerospace Tech", "Cybersecurity", "Advanced Manufacturing"],
+    summary: "Dayton is the birthplace of aviation and remains one of the nation's most important defense technology cities. Wright-Patterson Air Force Base — the largest USAF installation in the country — drives massive demand for cybersecurity, aerospace engineering, AI, and defense systems talent. The National Air and Space Intelligence Center and Air Force Research Laboratory anchor a unique defense tech ecosystem.",
+    cost_of_living: { index: 78, note: "Significantly below US average. Exceptional affordability with strong defense-sector salaries.", avg_rent_1br: 920, avg_home_price: 185000 },
+    weather: { description: "Four seasons. Cold snowy winters, warm humid summers.", avg_summer: "83°F (28°C)", avg_winter: "28°F (-2°C)", sunny_days: 178 },
+    colleges: ["University of Dayton", "Wright State University", "Sinclair Community College"],
+    major_companies: ["Wright-Patterson AFB", "LexisNexis (HQ)", "Reynolds and Reynolds", "CareSource", "Standard Register"]
+  },
+  {
+    name: "Albany, NY", tech_score: 68, growth_label: "Strong",
+    total_tech_jobs: 3200, ai_jobs: 520, finance_tech_jobs: 440,
+    avg_salary: 98000, startup_activity: "Moderate",
+    top_industries: ["Semiconductor Manufacturing", "Nanotechnology", "Government Tech", "HealthTech"],
+    summary: "Albany is the center of New York's semiconductor and nanotechnology corridor, home to SUNY Poly's College of Nanoscale Science — the world's most advanced nanotechnology research facility. GlobalFoundries' fab and a dense cluster of chip equipment companies make the Capital Region a critical node in the US semiconductor supply chain, accelerated by CHIPS Act funding.",
+    cost_of_living: { index: 88, note: "Below US average. Strong salaries in semiconductor and government sectors.", avg_rent_1br: 1350, avg_home_price: 295000 },
+    weather: { description: "Cold snowy winters, warm summers. Full four seasons with significant snowfall.", avg_summer: "82°F (28°C)", avg_winter: "22°F (-6°C)", sunny_days: 163 },
+    colleges: ["SUNY Albany", "Rensselaer Polytechnic Institute (nearby Troy)", "Union College"],
+    major_companies: ["GlobalFoundries (fab)", "SUNY Poly NanoTech", "NY State government tech", "IBM (Research)", "General Electric"]
+  },
+  {
+    name: "Asheville, NC", tech_score: 59, growth_label: "Emerging",
+    total_tech_jobs: 1800, ai_jobs: 240, finance_tech_jobs: 210,
+    avg_salary: 82000, startup_activity: "Moderate",
+    top_industries: ["Creative Tech", "Remote-First Companies", "HealthTech", "Sustainable Tech"],
+    summary: "Asheville has become one of the top destinations in the US for remote tech workers, drawn by its mountain setting, vibrant arts scene, and rapidly improving broadband infrastructure. The city punches above its weight in creative technology, UX design, and sustainability-focused startups, with a growing influx of tech talent leaving larger metros in search of quality of life.",
+    cost_of_living: { index: 96, note: "Near US average, rising due to remote worker influx. Still affordable relative to coastal cities.", avg_rent_1br: 1580, avg_home_price: 420000 },
+    weather: { description: "Four mild seasons. Cooler summers due to elevation. Moderate snowfall in winter.", avg_summer: "81°F (27°C)", avg_winter: "36°F (2°C)", sunny_days: 213 },
+    colleges: ["UNC Asheville", "Western Carolina University (nearby)", "AB Tech Community College"],
+    major_companies: ["Mission Health (HealthTech)", "Cúram Software", "SkillPath", "Linamar", "Highland Brewing (tech ops)"]
+  },
+  {
+    name: "Columbia, SC", tech_score: 60, growth_label: "Emerging",
+    total_tech_jobs: 2400, ai_jobs: 320, finance_tech_jobs: 410,
+    avg_salary: 84000, startup_activity: "Moderate",
+    top_industries: ["Cybersecurity", "Government Tech", "HealthTech", "EdTech"],
+    summary: "Columbia is South Carolina's capital and a growing cybersecurity hub anchored by Fort Jackson — the largest US Army training center — and the state government's expanding technology procurement. The University of South Carolina's cybersecurity program and a low cost of living are drawing defense contractors and government tech firms establishing southeast operations.",
+    cost_of_living: { index: 86, note: "Well below US average. State capital with stable government-sector employment.", avg_rent_1br: 1180, avg_home_price: 265000 },
+    weather: { description: "Hot humid summers. Mild winters with rare snow. Long warm springs and falls.", avg_summer: "93°F (34°C)", avg_winter: "44°F (7°C)", sunny_days: 215 },
+    colleges: ["University of South Carolina", "Columbia College", "Benedict College"],
+    major_companies: ["Prisma Health (IT division)", "Blue Cross Blue Shield SC", "Trustco", "Fort Jackson (defense tech)", "SCANA Energy"]
+  },
+  {
+    name: "Manchester, NH", tech_score: 69, growth_label: "Strong",
+    total_tech_jobs: 2600, ai_jobs: 380, finance_tech_jobs: 520,
+    avg_salary: 101000, startup_activity: "Moderate",
+    top_industries: ["Cybersecurity", "Fintech", "HealthTech", "Defense Tech"],
+    summary: "Manchester is New Hampshire's largest city and a quietly thriving tech hub benefiting from proximity to Boston, no state income tax, and significantly lower real estate costs. The city hosts a growing cluster of cybersecurity and defense tech firms attracted by proximity to federal contracts in the Northeast corridor and a highly educated workforce drawn by quality of life.",
+    cost_of_living: { index: 95, note: "Near US average. No state income tax provides a meaningful take-home pay advantage.", avg_rent_1br: 1620, avg_home_price: 390000 },
+    weather: { description: "Cold snowy winters. Warm summers. Classic New England four-season climate.", avg_summer: "82°F (28°C)", avg_winter: "20°F (-7°C)", sunny_days: 197 },
+    colleges: ["University of New Hampshire (Manchester)", "Southern New Hampshire University (HQ)", "Saint Anselm College"],
+    major_companies: ["Southern New Hampshire University (tech)", "PC Connection (HQ)", "BAE Systems (division)", "Oracle (Dyn)", "Segmint"]
+  },
+  {
+    name: "Memphis, TN", tech_score: 61, growth_label: "Emerging",
+    total_tech_jobs: 2600, ai_jobs: 340, finance_tech_jobs: 480,
+    avg_salary: 86000, startup_activity: "Moderate",
+    top_industries: ["Logistics Tech", "HealthTech", "Fintech", "Supply Chain AI"],
+    summary: "Memphis is the logistics capital of the world, home to FedEx's global headquarters and one of the busiest cargo airports on the planet. This drives outsized demand for supply chain technology, AI-powered routing, and logistics automation talent. A growing health IT sector anchored by St. Jude Children's Research Hospital adds a second major technology pillar to the city's economy.",
+    cost_of_living: { index: 80, note: "Well below US average. Among the most affordable major cities in the South.", avg_rent_1br: 1050, avg_home_price: 225000 },
+    weather: { description: "Hot humid summers. Mild winters with occasional ice storms. Long warm springs.", avg_summer: "92°F (33°C)", avg_winter: "42°F (6°C)", sunny_days: 218 },
+    colleges: ["University of Memphis", "Rhodes College", "Christian Brothers University"],
+    major_companies: ["FedEx (Global HQ)", "St. Jude Children's Research Hospital", "AutoZone (HQ)", "International Paper (HQ)", "First Horizon Bank"]
+  },
 ]
 
 export default CITIES
