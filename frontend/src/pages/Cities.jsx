@@ -16,6 +16,13 @@ const ACTIVITY_COLORS = {
   'Medium':    'text-yellow-400',
 }
 
+// Fixed ranks — always based on high-to-low tech score regardless of sort
+const RANK_MAP = Object.fromEntries(
+  [...ALL_CITIES]
+    .sort((a, b) => b.tech_score - a.tech_score)
+    .map((city, i) => [city.name, i + 1])
+)
+
 export default function Cities() {
   const [cities, setCities] = useState([])
   const [filtered, setFiltered] = useState([])
@@ -96,7 +103,7 @@ export default function Cities() {
         ) : filtered.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-slate-500 mb-2">"{search}" isn't in our ranked database.</p>
-            <p className="text-slate-600 text-sm mb-6">We track 50 US tech cities. Want general info about this city?</p>
+            <p className="text-slate-600 text-sm mb-6">We rank 100 US tech cities. Want general info about this city?</p>
             <button
               onClick={handleLookup}
               disabled={lookupLoading}
@@ -116,7 +123,7 @@ export default function Cities() {
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-4">
-                    <span className="text-2xl font-bold text-slate-700">#{i + 1}</span>
+                    <span className="text-2xl font-bold text-slate-700">#{RANK_MAP[city.name]}</span>
                     <div>
                       <div className="flex items-center gap-3 mb-1">
                         <h3 className="text-white font-bold text-lg group-hover:text-cyan-400 transition-colors">{city.name}</h3>

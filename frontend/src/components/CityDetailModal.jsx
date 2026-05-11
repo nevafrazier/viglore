@@ -35,7 +35,7 @@ export default function CityDetailModal({ city, onClose }) {
         {/* Estimated data notice */}
         {isEstimated && (
           <div className="mx-6 mt-5 bg-amber-950/30 border border-amber-800/40 rounded-xl px-4 py-3 text-amber-400 text-sm">
-            This city isn't in our ranked database — showing general information pulled from Wikipedia. Detailed job stats are only available for our 50 tracked cities.
+            This city isn't in our ranked database — showing general information pulled from Wikipedia. Detailed job stats are only available for our 100 ranked cities.
           </div>
         )}
 
