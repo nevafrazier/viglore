@@ -66,6 +66,8 @@ def extract_achievements(full_text: str) -> list[str]:
     achievements = []
     seen = set()
 
+    DANGLING = {'to', 'the', 'a', 'an', 'of', 'in', 'by', 'at', 'for', 'on', 'and', 'or', 'with', 'as', 'into'}
+
     patterns = [
         r'(best-selling [\w\s]{3,40}(?:of all time)?)',
         r'(highest-grossing [\w\s]{3,40})',
@@ -73,7 +75,8 @@ def extract_achievements(full_text: str) -> list[str]:
         r'([\d,.]+\s*(?:million|billion) copies (?:sold|shipped))',
         r'([\d,.]+\s*(?:million|billion) (?:monthly active )?(?:players|users|registered accounts))',
         r'(Guinness World Record[s]? for [^.\n]{5,60})',
-        r'(first [\w\s]{5,50} (?:to|in history))',
+        r'(first [\w\s]{3,30} to [\w\s\-]{5,50})',
+        r'(first [\w\s]{5,50} in history[\w\s,]{0,40})',
         r'(\$[\d,.]+\s*(?:million|billion) (?:in )?(?:revenue|box office|worldwide gross))',
         r'(number[- ]one [\w\s]{5,40})',
         r'([\d]+ (?:platinum|gold) (?:certif\w+|record))',
@@ -85,7 +88,8 @@ def extract_achievements(full_text: str) -> list[str]:
         for m in re.finditer(pattern, full_text, re.I):
             text = m.group(1).strip().rstrip('.,;').capitalize()
             key = text.lower()[:40]
-            if len(text) > 10 and key not in seen:
+            last_word = text.split()[-1].lower().rstrip('.,;') if text.split() else ''
+            if len(text) > 15 and key not in seen and last_word not in DANGLING:
                 seen.add(key)
                 achievements.append(text)
 
