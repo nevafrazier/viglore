@@ -68,16 +68,9 @@ export default function Dashboard() {
     }
   }
 
-  const selectSuggestion = async (title) => {
+  const selectSuggestion = (title) => {
     if (title === selectedTitle) return
-    setSelectedTitle(title)
-    setTopicInfo(null)
-    try {
-      const res = await describeTopic(query, title)
-      setTopicInfo(res.data)
-    } catch {
-      // silently fail — news data still shows
-    }
+    handleSearch(title)
   }
 
   const handleSearch = (term) => {
