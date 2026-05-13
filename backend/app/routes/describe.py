@@ -63,37 +63,48 @@ def extract_awards(full_text: str) -> list[dict]:
 
 
 def extract_achievements(full_text: str) -> list[str]:
+    # Split into sentences, then find ones that signal an achievement.
+    # This guarantees we always return complete sentences, never mid-phrase fragments.
+    sentences = re.split(r'(?<=[.!?])\s+|\n{2,}', full_text)
+
+    SIGNALS = [
+        r'best.?sell',
+        r'highest.?gross',
+        r'guinness world record',
+        r'[\d,.]+\s*(?:million|billion)\s*copies',
+        r'[\d,.]+\s*(?:million|billion)\s*(?:monthly active\s*)?(?:players|users|registered)',
+        r'number.?one\b',
+        r'\d+\s*(?:platinum|gold)\s*(?:certif|record)',
+        r'inducted into the',
+        r'over\s+[\d,.]+\s*(?:million|billion)\s*(?:copies|units|downloads|sales)',
+        r'\$[\d,.]+\s*(?:million|billion)\s*(?:in\s+)?(?:revenue|box office|worldwide gross)',
+        r'\bmost\s+(?:watched|played|downloaded|streamed|successful)\b',
+        r'\bfirst\b[^.]{8,60}\bto\s+\w{4,}',
+        r'\bfirst\b[^.]{8,60}\bin\s+history\b',
+    ]
+
     achievements = []
     seen = set()
 
-    DANGLING = {'to', 'the', 'a', 'an', 'of', 'in', 'by', 'at', 'for', 'on', 'and', 'or', 'with', 'as', 'into'}
+    for raw in sentences:
+        s = raw.strip()
+        if len(s) < 25 or len(s) > 300:
+            continue
+        lower = s.lower()
+        for sig in SIGNALS:
+            if re.search(sig, lower):
+                # Trim to ~150 chars at a clean word boundary
+                if len(s) > 150:
+                    s = s[:147].rsplit(' ', 1)[0] + '...'
+                key = s.lower()[:40]
+                if key not in seen:
+                    seen.add(key)
+                    achievements.append(s)
+                break
+        if len(achievements) >= 6:
+            break
 
-    patterns = [
-        r'(best-selling [\w\s]{3,40}(?:of all time)?)',
-        r'(highest-grossing [\w\s]{3,40})',
-        r'(most (?:watched|played|downloaded|streamed|successful) [\w\s]{3,35})',
-        r'([\d,.]+\s*(?:million|billion) copies (?:sold|shipped))',
-        r'([\d,.]+\s*(?:million|billion) (?:monthly active )?(?:players|users|registered accounts))',
-        r'(Guinness World Record[s]? for [^.\n]{5,60})',
-        r'(first [\w\s]{3,30} to [\w\s\-]{5,50})',
-        r'(first [\w\s]{5,50} in history[\w\s,]{0,40})',
-        r'(\$[\d,.]+\s*(?:million|billion) (?:in )?(?:revenue|box office|worldwide gross))',
-        r'(number[- ]one [\w\s]{5,40})',
-        r'([\d]+ (?:platinum|gold) (?:certif\w+|record))',
-        r'(inducted into the [\w\s]{5,40})',
-        r'(over [\d,.]+\s*(?:million|billion) (?:copies|units|downloads|sales))',
-    ]
-
-    for pattern in patterns:
-        for m in re.finditer(pattern, full_text, re.I):
-            text = m.group(1).strip().rstrip('.,;').capitalize()
-            key = text.lower()[:40]
-            last_word = text.split()[-1].lower().rstrip('.,;') if text.split() else ''
-            if len(text) > 15 and key not in seen and last_word not in DANGLING:
-                seen.add(key)
-                achievements.append(text)
-
-    return achievements[:6]
+    return achievements
 
 
 def extract_structured_data(full_text: str, summary: str, content_type: str) -> dict:
