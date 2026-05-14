@@ -147,20 +147,6 @@ export default function TopicDescription({ info, query }) {
         </div>
       )}
 
-      {/* Achievements */}
-      {info.achievements?.length > 0 && (
-        <div className="px-5 pb-5">
-          <p className="text-green-500 text-xs font-semibold uppercase tracking-wider mb-2">🏆 Records & Achievements</p>
-          <ul className="space-y-1.5">
-            {info.achievements.map((a, i) => (
-              <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
-                <span className="text-green-500 mt-0.5 shrink-0">✓</span>
-                {a}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
 
       {/* Footer */}
       <div className="px-5 py-2.5 border-t border-slate-800 flex flex-wrap gap-4 text-xs text-slate-600">
