@@ -1,6 +1,7 @@
 import re
 import httpx
-from fastapi import APIRouter
+from fastapi import APIRouter, Query, Request
+from app.limiter import limiter
 
 router = APIRouter()
 
@@ -157,7 +158,8 @@ def extract_structured_data(full_text: str, summary: str, content_type: str) -> 
 
 
 @router.get("/suggest")
-async def suggest(q: str):
+@limiter.limit("60/minute")
+async def suggest(request: Request, q: str = Query(..., min_length=1, max_length=200)):
     headers = {"User-Agent": "TechSentinelAI/1.0 (educational project) httpx/0.27"}
     async with httpx.AsyncClient(headers=headers) as client:
         try:
@@ -185,7 +187,8 @@ async def suggest(q: str):
 
 
 @router.get("/describe")
-async def describe(q: str, title: str = None):
+@limiter.limit("30/minute")
+async def describe(request: Request, q: str = Query(..., min_length=1, max_length=200), title: str = Query(None, max_length=200)):
     # `title` lets the frontend request a specific Wikipedia page after disambiguation
     search_term = (title or q).replace(" ", "_")
     ticker = TICKER_MAP.get(q.lower())

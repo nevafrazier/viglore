@@ -1,10 +1,11 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query, Request
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from app.services.reddit_service import search_reddit
 from app.services.news_service import search_news
 from app.services.sentiment_service import analyze_texts
 from app.services.summary_service import generate_summary
 from app.utils.keywords import extract_keywords
+from app.limiter import limiter
 
 router = APIRouter()
 analyzer = SentimentIntensityAnalyzer()
@@ -15,7 +16,8 @@ def score_item(text: str) -> float:
 
 
 @router.get("/search")
-async def search(q: str):
+@limiter.limit("30/minute")
+async def search(request: Request, q: str = Query(..., min_length=1, max_length=200)):
     reddit_posts = search_reddit(q)
     news_articles = search_news(q)
 
