@@ -77,6 +77,18 @@ City data lives in `frontend/src/data/cityData.js` — 100 cities with jobs, sal
 
 ---
 
+## Security
+
+![Security Headers](https://img.shields.io/badge/Security%20Headers-A%20Rated-34d399?style=flat-square)
+
+- HTTP security headers on both frontend and backend — CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
+- CORS locked to production domain only (`viglore.com`) — no wildcard origins
+- Rate limiting on all external API endpoints via `slowapi` — prevents quota abuse
+- Input validation and max-length constraints on all query parameters
+- API keys stored as environment variables, never committed to source control
+
+---
+
 ## Local Development
 
 ### Prerequisites
