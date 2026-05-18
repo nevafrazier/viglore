@@ -12,6 +12,8 @@
   <img src="https://img.shields.io/badge/Backend-FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI"/>
   &nbsp;
   <img src="https://img.shields.io/badge/Deployed-Vercel%20%2B%20Railway-000000?style=flat-square&logo=vercel&logoColor=white" alt="Deployed"/>
+  &nbsp;
+  <img src="https://img.shields.io/badge/Mozilla%20Observatory-A%2B-34d399?style=flat-square" alt="Mozilla Observatory A+"/>
 </p>
 
 ---
@@ -79,13 +81,16 @@ City data lives in `frontend/src/data/cityData.js` — 100 cities with jobs, sal
 
 ## Security
 
+![Mozilla Observatory](https://img.shields.io/badge/Mozilla%20Observatory-A%2B-34d399?style=flat-square)
 ![Security Headers](https://img.shields.io/badge/Security%20Headers-A%20Rated-34d399?style=flat-square)
 
-- HTTP security headers on both frontend and backend — CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
-- CORS locked to production domain only (`viglore.com`) — no wildcard origins
-- Rate limiting on all external API endpoints via `slowapi` — prevents quota abuse
-- Input validation and max-length constraints on all query parameters
-- API keys stored as environment variables, never committed to source control
+- **Strict CSP** — `script-src 'self'` only, no `unsafe-inline`; `object-src 'none'`; `frame-ancestors 'none'`
+- **CORS locked** to `viglore.com` only — no wildcard origins; `allow_methods` restricted to GET
+- **Rate limiting** on all external API endpoints via `slowapi` — 10–60 req/min per endpoint
+- **Input validation** — max-length constraints on all query parameters via FastAPI `Query()`
+- **Cross-Origin-Resource-Policy** — `same-origin` prevents other sites embedding Viglore assets
+- **HSTS** — `max-age=63072000` enforces HTTPS on all return visits
+- **API keys** stored as environment variables, never committed to source control
 
 ---
 
