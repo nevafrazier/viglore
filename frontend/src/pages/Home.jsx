@@ -60,7 +60,7 @@ export default function Home() {
       <div className="max-w-5xl mx-auto px-6 pt-24 pb-16 text-center">
         <div className="inline-flex items-center gap-2 bg-cyan-950/40 border border-cyan-900/50 rounded-full px-4 py-1.5 text-cyan-400 text-sm mb-8">
           <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-          AI-Powered Market & Trend Intelligence
+          Real-Time Market & Trend Intelligence
         </div>
 
         <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight tracking-tight">

@@ -8,6 +8,7 @@ import NewsCard from '../components/NewsCard'
 import RedditCard from '../components/RedditCard'
 import TopicDescription from '../components/TopicDescription'
 import CitySignalPanel from '../components/CitySignalPanel'
+import TrendingSearches from '../components/TrendingSearches'
 
 function ArticleSection({ title, subtitle, dot, items, Component }) {
   if (!items?.length) return null
@@ -124,10 +125,13 @@ export default function Dashboard() {
         {error && <p className="text-red-400 py-10 text-center">{error}</p>}
 
         {!data && !loading && !error && (
-          <div className="flex flex-col items-center justify-center py-32 text-center">
-            <div className="w-12 h-12 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-2xl mb-4">🔍</div>
-            <h2 className="text-white font-semibold text-lg mb-2">Ready to analyze</h2>
-            <p className="text-slate-500 text-sm max-w-sm">Type any company, stock, game, or topic in the search bar above to see live sentiment scores, news coverage, and trend data.</p>
+          <div className="py-16">
+            <div className="flex flex-col items-center text-center mb-10">
+              <div className="w-12 h-12 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-2xl mb-4">🔍</div>
+              <h2 className="text-white font-semibold text-lg mb-2">Ready to analyze</h2>
+              <p className="text-slate-500 text-sm max-w-sm">Type any company, stock, game, or topic above to see live sentiment scores, news coverage, and trend data.</p>
+            </div>
+            <TrendingSearches />
           </div>
         )}
 

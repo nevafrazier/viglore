@@ -18,6 +18,13 @@ class SearchCache(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class SearchLog(Base):
+    __tablename__ = "search_logs"
+    id = Column(Integer, primary_key=True)
+    query = Column(String(200), nullable=False, index=True)
+    searched_at = Column(DateTime, default=datetime.utcnow)
+
+
 def init_db():
     Base.metadata.create_all(bind=engine)
 
