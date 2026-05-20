@@ -38,17 +38,12 @@ async def search(
     all_texts = [a["title"] for a in news_articles]
     sentiment = analyze_texts(all_texts)
     keywords = extract_keywords(all_texts)
-    summary = generate_summary(q, sentiment, keywords, news_articles, [])
+    summary = generate_summary(q, sentiment, keywords, news_articles)
 
     return {
         "query": q,
-        "sentiment": {
-            **sentiment,
-            "reddit_count": 0,
-            "news_count": len(news_articles),
-        },
+        "sentiment": {**sentiment, "news_count": len(news_articles)},
         "keywords": keywords,
-        "reddit_posts": [],
         "news_articles": sorted(news_articles, key=lambda x: x["sentiment_score"], reverse=True),
         "summary": summary,
     }

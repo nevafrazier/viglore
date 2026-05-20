@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from app.limiter import limiter
-from app.routes import search, stocks, cities, trends, describe, city_signal, stocktwits, city_lookup, trending_topics, trending_searches
+from app.routes import search, stocks, cities, describe, city_signal, stocktwits, city_lookup, trending_topics, trending_searches
 from app.database.database import init_db
 
 
@@ -33,7 +33,6 @@ app.add_middleware(
 app.include_router(search.router, prefix="/api")
 app.include_router(stocks.router, prefix="/api")
 app.include_router(cities.router, prefix="/api")
-app.include_router(trends.router, prefix="/api")
 app.include_router(describe.router, prefix="/api")
 app.include_router(city_signal.router, prefix="/api")
 app.include_router(stocktwits.router, prefix="/api")

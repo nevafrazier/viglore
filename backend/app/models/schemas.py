@@ -6,7 +6,6 @@ class SearchResponse(BaseModel):
     query: str
     sentiment: dict
     keywords: list[dict]
-    reddit_posts: list[dict]
     news_articles: list[dict]
     summary: str
 

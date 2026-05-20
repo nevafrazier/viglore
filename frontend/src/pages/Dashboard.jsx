@@ -5,7 +5,6 @@ import SentimentMeter from '../components/SentimentMeter'
 import KeywordPanel from '../components/KeywordPanel'
 import SummaryPanel from '../components/SummaryPanel'
 import NewsCard from '../components/NewsCard'
-import RedditCard from '../components/RedditCard'
 import TopicDescription from '../components/TopicDescription'
 import CitySignalPanel from '../components/CitySignalPanel'
 import TrendingSearches from '../components/TrendingSearches'
@@ -83,12 +82,9 @@ export default function Dashboard() {
     }
   }
 
-  const pos   = data?.news_articles.filter(a => a.sentiment_score >= 0.05)  ?? []
-  const neu   = data?.news_articles.filter(a => a.sentiment_score > -0.05 && a.sentiment_score < 0.05) ?? []
-  const neg   = data?.news_articles.filter(a => a.sentiment_score <= -0.05) ?? []
-  const rPos  = data?.reddit_posts.filter(p => p.sentiment_score >= 0.05)   ?? []
-  const rNeg  = data?.reddit_posts.filter(p => p.sentiment_score <= -0.05)  ?? []
-  const rNeu  = data?.reddit_posts.filter(p => p.sentiment_score > -0.05 && p.sentiment_score < 0.05) ?? []
+  const pos = data?.news_articles.filter(a => a.sentiment_score >= 0.05)  ?? []
+  const neu = data?.news_articles.filter(a => a.sentiment_score > -0.05 && a.sentiment_score < 0.05) ?? []
+  const neg = data?.news_articles.filter(a => a.sentiment_score <= -0.05) ?? []
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
