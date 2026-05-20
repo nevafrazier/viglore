@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from datetime import datetime, timedelta
+from datetime import datetime, UTC, timedelta
 from app.database.database import get_db, SearchLog
 
 router = APIRouter()
@@ -9,7 +9,7 @@ router = APIRouter()
 
 @router.get("/trending-searches")
 def trending_searches(db: Session = Depends(get_db)):
-    cutoff = datetime.utcnow() - timedelta(days=7)
+    cutoff = datetime.now(UTC) - timedelta(days=7)
     results = (
         db.query(SearchLog.query, func.count(SearchLog.id).label("count"))
         .filter(SearchLog.searched_at >= cutoff)

@@ -36,8 +36,7 @@ def test_stocks_ticker_too_long_returns_422(client):
 # --- Response shape ---
 
 @patch("app.routes.search.search_news", return_value=[])
-@patch("app.routes.search.search_reddit", return_value=[])
-def test_search_response_has_expected_keys(mock_reddit, mock_news, client):
+def test_search_response_has_expected_keys(mock_news, client):
     response = client.get("/api/search?q=Apple")
     assert response.status_code == 200
     data = response.json()
@@ -46,8 +45,7 @@ def test_search_response_has_expected_keys(mock_reddit, mock_news, client):
         assert key in data
 
 @patch("app.routes.search.search_news", return_value=[])
-@patch("app.routes.search.search_reddit", return_value=[])
-def test_search_logs_to_db(mock_reddit, mock_news, client):
+def test_search_logs_to_db(mock_news, client):
     client.get("/api/search?q=uniquetestquery123")
     trending = client.get("/api/trending-searches").json()
     queries = [t["query"] for t in trending]

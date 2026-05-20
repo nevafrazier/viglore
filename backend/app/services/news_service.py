@@ -1,8 +1,12 @@
 import os
+import logging
 from newsapi import NewsApiClient
 from dotenv import load_dotenv
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
+_news_client = NewsApiClient(api_key=os.getenv("NEWS_API_KEY"))
 
 SOURCE_QUALITY = {
     "reuters": 5, "bloomberg": 5, "financial times": 5, "wall street journal": 5,
@@ -21,12 +25,10 @@ def source_quality_score(source_name: str) -> int:
     return 2
 
 def title_contains_query(title: str, query: str) -> bool:
-    """Article title MUST contain the query or a significant query word."""
     title_l = title.lower()
     q_l = query.lower()
     if q_l in title_l:
         return True
-    # For multi-word queries, require at least one significant word in title
     words = [w for w in q_l.split() if len(w) > 3]
     return any(w in title_l for w in words)
 
@@ -48,13 +50,12 @@ def relevance_score(title: str, desc: str, source: str, query: str) -> float:
 
 
 def search_news(query: str, limit: int = 12) -> list[dict]:
-    client = NewsApiClient(api_key=os.getenv("NEWS_API_KEY"))
-
     def fetch(q_param):
         try:
-            resp = client.get_everything(q=q_param, language="en", sort_by="relevancy", page_size=25)
+            resp = _news_client.get_everything(q=q_param, language="en", sort_by="relevancy", page_size=25)
             return resp.get("articles", [])
-        except Exception:
+        except Exception as e:
+            logger.warning("NewsAPI fetch failed for '%s': %s", q_param, e)
             return []
 
     articles = fetch(f'"{query}"')
@@ -75,13 +76,10 @@ def search_news(query: str, limit: int = 12) -> list[dict]:
             continue
         if "[Removed]" in title:
             continue
-
-        # HARD REQUIREMENT: query must appear in the title
         if not title_contains_query(title, query):
             continue
 
         seen_titles.add(title)
-
         score = relevance_score(title, desc, source_name, query)
 
         results.append({

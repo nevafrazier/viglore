@@ -1,6 +1,8 @@
+import logging
 import httpx
 
-HEADERS = {"User-Agent": "SignalScope/1.0"}
+logger = logging.getLogger(__name__)
+HEADERS = {"User-Agent": "Viglore/1.0"}
 
 
 def search_reddit(query: str, limit: int = 15) -> list[dict]:
@@ -25,6 +27,6 @@ def search_reddit(query: str, limit: int = 15) -> list[dict]:
                 "subreddit": "Hacker News",
                 "created_utc": h.get("created_at_i", 0),
             })
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("Hacker News fetch failed for '%s': %s", query, e)
     return results

@@ -1,6 +1,8 @@
+import logging
 import httpx
 from fastapi import APIRouter
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 INDUSTRY_KEYWORDS = {
@@ -18,10 +20,8 @@ INDUSTRY_KEYWORDS = {
 
 def detect_industries(text: str) -> list[str]:
     text_lower = text.lower()
-    found = []
-    for industry, keywords in INDUSTRY_KEYWORDS.items():
-        if any(k in text_lower for k in keywords):
-            found.append(industry)
+    found = [industry for industry, keywords in INDUSTRY_KEYWORDS.items()
+             if any(k in text_lower for k in keywords)]
     return found[:5] if found else ["General Services"]
 
 
@@ -42,15 +42,13 @@ async def fetch_wikipedia(city: str) -> tuple[str, str]:
                 )
                 if resp.status_code == 200:
                     data = resp.json()
-                    page_type = data.get("type", "")
                     extract = data.get("extract", "")
-                    # Skip disambiguation and articles not about a place
-                    if page_type == "disambiguation" or not extract:
+                    if data.get("type") == "disambiguation" or not extract:
                         continue
-                    # Make sure this is actually about a city/place
                     if any(w in extract.lower() for w in ["city", "town", "municipality", "county seat", "capital"]):
                         return extract, data.get("title", name)
-            except Exception:
+            except Exception as e:
+                logger.warning("Wikipedia fetch failed for '%s': %s", title, e)
                 continue
     return "", name
 
@@ -61,14 +59,12 @@ async def city_lookup(city: str):
 
     city_lower = city.lower().strip()
 
-    # Check our ranked database first
     for c in CITY_DATA:
         name_lower = c["name"].lower()
         short_name = name_lower.split(",")[0].strip()
         if city_lower == short_name or city_lower == name_lower:
             return {**c, "is_estimated": False}
 
-    # Fall back to Wikipedia
     summary, title = await fetch_wikipedia(city)
 
     if not summary:

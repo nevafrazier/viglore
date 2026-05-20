@@ -1,13 +1,15 @@
 from sqlalchemy import create_engine, Column, Integer, String, DateTime
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from datetime import datetime
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from datetime import datetime, UTC
 
 DATABASE_URL = "sqlite:///./techsentinel.db"
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(bind=engine)
-Base = declarative_base()
+
+
+class Base(DeclarativeBase):
+    pass
 
 
 class SearchCache(Base):
@@ -15,14 +17,14 @@ class SearchCache(Base):
     id = Column(Integer, primary_key=True)
     query = Column(String, index=True)
     result_json = Column(String)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
 
 class SearchLog(Base):
     __tablename__ = "search_logs"
     id = Column(Integer, primary_key=True)
     query = Column(String(200), nullable=False, index=True)
-    searched_at = Column(DateTime, default=datetime.utcnow)
+    searched_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
 
 def init_db():

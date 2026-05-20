@@ -1,12 +1,11 @@
 import os
 import time
+import logging
 import httpx
 from fastapi import APIRouter
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-from dotenv import load_dotenv
 
-load_dotenv()
-
+logger = logging.getLogger(__name__)
 router = APIRouter()
 analyzer = SentimentIntensityAnalyzer()
 
@@ -60,7 +59,8 @@ async def trending():
                         "sentiment": score,
                         "published_at": a.get("publishedAt", ""),
                     })
-            except Exception:
+            except Exception as e:
+                logger.warning("Failed to fetch trending topics for category '%s': %s", cat, e)
                 continue
 
     result = {"trending": results}
