@@ -19,6 +19,19 @@ TICKER_MAP = {
     "robinhood": "HOOD", "paypal": "PYPL", "visa": "V",
 }
 
+# Wikipedia's default page for these names is NOT the company — override to the exact article
+WIKI_OVERRIDES = {
+    "apple":     "Apple_Inc.",
+    "meta":      "Meta_Platforms",
+    "amazon":    "Amazon_(company)",
+    "tesla":     "Tesla,_Inc.",
+    "disney":    "The_Walt_Disney_Company",
+    "oracle":    "Oracle_Corporation",
+    "snap":      "Snap_Inc.",
+    "robinhood": "Robinhood_Markets",
+    "visa":      "Visa_Inc.",
+}
+
 MAJOR_AWARDS = [
     "Academy Award", "Oscar", "BAFTA", "Grammy", "Golden Globe",
     "Emmy", "Tony Award", "Game of the Year", "GOTY",
@@ -148,8 +161,9 @@ def extract_structured_data(full_text: str, summary: str, content_type: str) -> 
 
 
 async def fetch_topic(q: str, title: str = None) -> dict:
-    search_term = (title or q).replace(" ", "_")
-    ticker = TICKER_MAP.get(q.lower())
+    q_lower = q.lower()
+    search_term = (title or WIKI_OVERRIDES.get(q_lower) or q).replace(" ", "_")
+    ticker = TICKER_MAP.get(q_lower)
     headers = {"User-Agent": "Viglore/1.0 (https://github.com/nevafrazier/viglore) httpx/0.27"}
 
     async with httpx.AsyncClient(headers=headers) as client:
@@ -170,6 +184,9 @@ async def fetch_topic(q: str, title: str = None) -> dict:
 
                 structured = extract_structured_data(full_text, extract, content_type)
 
+                # Only show ticker if Wikipedia confirmed this is actually a company
+                confirmed_ticker = ticker if content_type == "company" else None
+
                 return {
                     "found": True,
                     "title": summary_data.get("title"),
@@ -177,7 +194,7 @@ async def fetch_topic(q: str, title: str = None) -> dict:
                     "extract": extract,
                     "thumbnail": summary_data.get("thumbnail", {}).get("source") if summary_data.get("thumbnail") else None,
                     "content_type": content_type,
-                    "stock_ticker": ticker,
+                    "stock_ticker": confirmed_ticker,
                     "awards": extract_awards(full_text),
                     "achievements": extract_achievements(full_text),
                     **structured,
