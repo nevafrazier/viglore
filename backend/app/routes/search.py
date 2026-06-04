@@ -25,6 +25,7 @@ async def search(
     q: str = Query(..., min_length=1, max_length=200),
     db: Session = Depends(get_db),
 ):
+    # log before hitting any APIs so the query is recorded even if something downstream fails
     db.add(SearchLog(query=q.lower().strip()))
     db.commit()
 
@@ -40,6 +41,7 @@ async def search(
     keywords = extract_keywords(all_texts)
     summary = generate_summary(q, sentiment, keywords, news_articles)
 
+    # most positive articles first so the sentiment split reads naturally top-to-bottom
     return {
         "query": q,
         "sentiment": {**sentiment, "news_count": len(news_articles)},

@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: viglore-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ALLOWED_ORIGINS
+        value: https://viglore.com,https://www.viglore.com
+      - key: NEWS_API_KEY
+        sync: false
+      - key: FINNHUB_KEY
+        sync: false

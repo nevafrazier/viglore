@@ -6,6 +6,7 @@ export default function TrendingSearches() {
   const [trending, setTrending] = useState([])
   const navigate = useNavigate()
 
+  // silently hide if the backend is down — this is bonus content, not critical
   useEffect(() => {
     getTrendingSearches()
       .then(res => setTrending(res.data || []))

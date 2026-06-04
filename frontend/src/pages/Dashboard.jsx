@@ -82,6 +82,7 @@ export default function Dashboard() {
     }
   }
 
+  // ±0.05 matches VADER's own neutral threshold
   const pos = data?.news_articles.filter(a => a.sentiment_score >= 0.05)  ?? []
   const neu = data?.news_articles.filter(a => a.sentiment_score > -0.05 && a.sentiment_score < 0.05) ?? []
   const neg = data?.news_articles.filter(a => a.sentiment_score <= -0.05) ?? []
